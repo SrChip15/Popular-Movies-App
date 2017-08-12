@@ -1,0 +1,10 @@
+<resources>
+    <!-- Application's name -->
+    <string name="app_name">FlixTrove</string>
+
+    <!-- Menu action to display top rated movies only -->
+    <string name="action_top_rated">Top Rated Movies</string>
+
+    <!-- Menu action to display most popular movies  -->
+    <string name="action_most_popular">Most Popular Movies</string>
+</resources>

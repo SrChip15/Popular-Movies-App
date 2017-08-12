@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.android.flixtrove.MainActivity">
+
+    <TextView
+        android:id="@+id/tv_url"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:textAppearanceMedium"/>
+
+    <Button
+        android:id="@+id/button_top_rated_web"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="showTopRatedMoviesInWeb"
+        android:text="show top rated movies"/>
+
+    <Button
+        android:id="@+id/button_popular_web"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="showPopularMoviesInWeb"
+        android:text="show popular movies"/>
+
+    <ImageView
+        android:id="@+id/iv_picasso_test"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+</LinearLayout>
