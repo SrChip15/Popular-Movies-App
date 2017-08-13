@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
+    <!-- Primary color for the application -->
+    <color name="colorPrimary">#f44336</color>
+
+    <!-- Darker version of the primary color used at different places of the UI -->
+    <color name="colorPrimaryDark">#ba000d</color>
+
+    <!-- Secondary color or color used to accent key parts of the UI -->
     <color name="colorAccent">#FF4081</color>
 </resources>

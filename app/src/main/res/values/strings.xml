@@ -7,4 +7,7 @@
 
     <!-- Menu action to display most popular movies  -->
     <string name="action_most_popular">Most Popular Movies</string>
+
+    <!-- Content description for the image view displaying the movie poster -->
+    <string name="poster_content_desc">Movie poster</string>
 </resources>

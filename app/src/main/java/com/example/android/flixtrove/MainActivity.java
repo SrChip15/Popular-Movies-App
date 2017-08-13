@@ -1,39 +1,69 @@
 package com.example.android.flixtrove;
 
-import android.content.Intent;
-import android.net.Uri;
+import android.app.LoaderManager;
+import android.app.LoaderManager.LoaderCallbacks;
+import android.content.Loader;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity
+		extends AppCompatActivity
+		implements LoaderCallbacks<List<Movie>> {
 
-	@BindView(R.id.tv_url)
-	TextView displayUrl;
-
-	@BindView(R.id.button_top_rated_web)
-	Button showInWeb;
-
-	@BindView(R.id.iv_picasso_test)
-	ImageView picassoTester;
+	private static final int MOVIE_LOADER_ID = 1;
+	@BindView(R.id.recycler_view)
+	RecyclerView recyclerView;
+	private MovieRecyclerAdapter movieAdapter;
+	private String QUERY_URL_STRING =
+			"https://api.themoviedb.org/3/movie/now_playing?api_key=" +
+					PrivateApiKey.YOUR_API_KEY +
+					"&language=en-US&page=1&region=US";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		// Inflate UI
 		setContentView(R.layout.activity_main);
 
+		// Bind ButterKnife to UI
 		ButterKnife.bind(MainActivity.this);
 
-		picassoTester.setVisibility(View.INVISIBLE);
+		// Optimize recyclerView
+		recyclerView.setHasFixedSize(true);
 
+		// Connect the {@link RecyclerView} widget to a GridView layout
+		// Get the current orientation of the screen
+		int orientation = this.getResources().getConfiguration().orientation;
+		// Set span count based on orientation
+		if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+			recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+		} else {
+			recyclerView.setLayoutManager(new GridLayoutManager(this, 5));
+		}
+
+		// Initialize movieAdapter with empty list
+		movieAdapter = new MovieRecyclerAdapter(new ArrayList<Movie>());
+
+		// Set the movieAdapter to the view
+		recyclerView.setAdapter(movieAdapter);
+
+		// Get a reference to the loader manager in order to interact with the loaders
+		LoaderManager loaderManager = getLoaderManager();
+
+		// Initialize the loader with required parameters
+		loaderManager.initLoader(MOVIE_LOADER_ID, null, MainActivity.this);
 	}
 
 	@Override
@@ -59,43 +89,27 @@ public class MainActivity extends AppCompatActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	public void showTopRatedMoviesInWeb(View view) {
-		String query_api_key = "api_key";
-		String key = PrivateApiKey.YOUR_API_KEY;
-		String searchListType = "top_rated";
-		Uri.Builder builder = new Uri.Builder();
-		builder.scheme("https")
-				.authority("api.themoviedb.org")
-				.appendPath("3")
-				.appendPath("movie")
-				.appendPath(searchListType)
-				.appendQueryParameter(query_api_key, key);
+	@Override
+	public Loader<List<Movie>> onCreateLoader(int id, Bundle args) {
+		// Kick start the loader to fetch movies
+		return new MovieLoader(MainActivity.this, QUERY_URL_STRING);
+	}
 
-		Uri queryUri = builder.build();
+	@Override
+	public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> movies) {
+		// Clear movieAdapter of old data
+		this.movieAdapter.clear();
 
-		Intent webIntent = new Intent(Intent.ACTION_VIEW, queryUri);
-		if (webIntent.resolveActivity(getPackageManager()) != null) {
-			startActivity(webIntent);
+		// Check if movies are loaded
+		if (movies != null && !movies.isEmpty()) {
+			this.movieAdapter.addAll(movies);
 		}
 	}
 
-	public void showPopularMoviesInWeb(View view) {
-		String query_api_key = "api_key";
-		String key = PrivateApiKey.YOUR_API_KEY;
-		String searchListType = "popular";
-		Uri.Builder builder = new Uri.Builder();
-		builder.scheme("https")
-				.authority("api.themoviedb.org")
-				.appendPath("3")
-				.appendPath("movie")
-				.appendPath(searchListType)
-				.appendQueryParameter(query_api_key, key);
-
-		Uri queryUri = builder.build();
-
-		Intent webIntent = new Intent(Intent.ACTION_VIEW, queryUri);
-		if (webIntent.resolveActivity(getPackageManager()) != null) {
-			startActivity(webIntent);
-		}
+	@Override
+	public void onLoaderReset(Loader<List<Movie>> loader) {
+		// Loader is being destroyed since current data is no longer valid
+		// Clear out movieAdapter's old data set
+		this.movieAdapter.clear();
 	}
 }

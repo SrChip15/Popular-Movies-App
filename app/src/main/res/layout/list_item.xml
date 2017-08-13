@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Layout for individual movie posters -->
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="137dp"
+    android:layout_height="205dp"
+    android:layout_marginLeft="1dp"
+    android:layout_marginTop="1dp">
+
+    <!-- Movie poster view -->
+    <ImageView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/iv_movie_poster"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginRight="1dp"
+        android:contentDescription="@string/poster_content_desc"
+        android:scaleType="centerCrop"/>
+
+</FrameLayout>
+
+
