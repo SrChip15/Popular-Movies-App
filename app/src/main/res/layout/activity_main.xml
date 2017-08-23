@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Layout for main screen/landing screen -->
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.example.android.flixtrove.MainActivity">
+    tools:context="com.example.android.flixtrove.activity.NowPlayingActivity">
 
     <!-- List of now playing movies in a grid view -->
     <android.support.v7.widget.RecyclerView
@@ -18,4 +17,10 @@
         android:background="#e0e0e0"
         android:scrollbars="vertical"/>
 
-</LinearLayout>
+    <ProgressBar
+        android:id="@+id/main_progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"/>
+
+</FrameLayout>
