@@ -1,5 +1,6 @@
 package com.example.android.flixtrove.activity;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.ProgressBar;
 
 import com.example.android.flixtrove.PrivateApiKey;
@@ -30,25 +32,52 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class NowPlayingActivity extends AppCompatActivity {
-	/** Tag for log messages */
-	private static final String TAG = NowPlayingActivity.class.getSimpleName();
+public class CatalogActivity extends AppCompatActivity {
+	/**
+	 * Tag for log messages
+	 */
+	private static final String TAG = CatalogActivity.class.getSimpleName();
+
+	/** Start from page 1 */
 	private static final int START_PAGE = 1;
-	/** API network call handler */
+
+	/**
+	 * API network call handler
+	 */
 	private static Retrofit retrofit = null;
-	/** Recycler view to host list of now playing movies */
+
+	/**
+	 * Recycler view to host list of now playing movies
+	 */
 	@BindView(R.id.recycler_view)
 	RecyclerView recyclerView;
+
 	@BindView(R.id.main_progress_bar)
 	ProgressBar progressBar;
-	/** Movie adapter for populating the recycler view */
+
+	/**
+	 * Movie adapter for populating the recycler view
+	 */
 	private MovieRecyclerAdapter adapter;
+
+	/** Movie API endpoints object */
 	private MovieApiEndpoints apiConnection;
+
+	/** Flag for fetching data over network */
 	private boolean isLoading = false;
+
+	/** Flag when total number of available pages in API is reached */
 	private boolean isLastPage = false;
+
+	/** Current page being fetched */
 	private int currentPage = START_PAGE;
 
-	private int totalPages = 5;
+	/** Total number of available pages from the API. Def */
+	private int totalPages;
+
+	/** Layout manager to display movie posters in a grid */
+	private GridLayoutManager layoutManager;
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +87,7 @@ public class NowPlayingActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_main);
 
 		// Bind ButterKnife to UI
-		ButterKnife.bind(NowPlayingActivity.this);
+		ButterKnife.bind(CatalogActivity.this);
 
 		// Initialize adapter
 		adapter = new MovieRecyclerAdapter(this);
@@ -66,13 +95,36 @@ public class NowPlayingActivity extends AppCompatActivity {
 		recyclerView.setHasFixedSize(true);
 
 		// layout manager for adapter
-		GridLayoutManager layoutManager =
-				new GridLayoutManager(this, 3, GridLayoutManager.VERTICAL, false);
+		layoutManager =
+				new GridLayoutManager
+						(
+								this,
+								1,              // Below global layout listener handles span count
+								GridLayoutManager.VERTICAL,
+								false           // reverse layout
+						);
 
 		recyclerView.setLayoutManager(layoutManager);
 
 		// Default animation for item in list
 		recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+		// Set number of movie posters to display per row
+		// This works for every android device (Jelly Bean+) of varying screen sizes
+		recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+			@Override
+			public void onGlobalLayout() {
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+					// This works only for devices with at least Jelly Bean or above
+					recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+					int viewWidth = recyclerView.getMeasuredWidth();
+					float posterImageWidth = getResources().getDimension(R.dimen.poster_width) - 10;
+					int newSpanCount = (int) Math.floor(viewWidth / posterImageWidth);
+					layoutManager.setSpanCount(newSpanCount);
+					layoutManager.requestLayout();
+				}
+			}
+		});
 
 		// Set the movieAdapter to the view
 		recyclerView.setAdapter(adapter);
@@ -115,7 +167,6 @@ public class NowPlayingActivity extends AppCompatActivity {
 		return true;
 	}
 
-
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int id = item.getItemId();
@@ -135,7 +186,11 @@ public class NowPlayingActivity extends AppCompatActivity {
 	}
 
 	private void loadFirstPage() {
-		callNowPlayingMoviesApi().enqueue(new Callback<MainResponse>() {
+		// Clear old data
+		adapter.clear();
+
+		// Make network call
+		callMoviesApi().enqueue(new Callback<MainResponse>() {
 			@Override
 			public void onResponse(@NonNull Call<MainResponse> call, @NonNull Response<MainResponse> response) {
 				List<Movie> movies = fetchMovies(response);
@@ -158,7 +213,7 @@ public class NowPlayingActivity extends AppCompatActivity {
 	}
 
 	private void loadNextPage() {
-		callNowPlayingMoviesApi().enqueue(new Callback<MainResponse>() {
+		callMoviesApi().enqueue(new Callback<MainResponse>() {
 			@Override
 			public void onResponse(@NonNull Call<MainResponse> call, @NonNull Response<MainResponse> response) {
 				isLoading = false;
@@ -178,8 +233,8 @@ public class NowPlayingActivity extends AppCompatActivity {
 		});
 	}
 
-	private Call<MainResponse> callNowPlayingMoviesApi() {
-		return apiConnection.getNowPlayingMovies(PrivateApiKey.YOUR_API_KEY, currentPage);
+	private Call<MainResponse> callMoviesApi() {
+		return apiConnection.getMovies(PrivateApiKey.YOUR_API_KEY, currentPage, "US");
 	}
 
 	private List<Movie> fetchMovies(Response<MainResponse> response) {

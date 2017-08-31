@@ -74,7 +74,19 @@ public class MovieRecyclerAdapter
 		Movie movieAtScrollPosition = this.movieList.get(position);
 
 		// Get the path of the current movie's poster
-		String moviePosterUrl = POSTER_BASE_URL + movieAtScrollPosition.getPosterPath();
+		String posterPath = movieAtScrollPosition.getPosterPath();
+
+		// Deal with null poster path values
+		if (posterPath == null) {
+			// Set default poster when movie poster unavailable
+			holder.displayMoviePoster.setImageResource(R.drawable.ic_movie_black);
+
+			// Bail early
+			return;
+		}
+
+		// If valid poster path exists for movie, append the same to the url
+		String moviePosterUrl = POSTER_BASE_URL + posterPath;
 
 		// Construct movie poster final url
 		Picasso.with(context)

@@ -2,8 +2,8 @@
 <!-- Layout for individual movie posters -->
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="137dp"
-    android:layout_height="205dp"
+    android:layout_width="@dimen/poster_width"
+    android:layout_height="@dimen/poster_height"
     android:layout_marginLeft="1dp"
     android:layout_marginTop="1dp">
 
