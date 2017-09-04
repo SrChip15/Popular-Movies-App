@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.example.android.flixtrove.R;
-import com.example.android.flixtrove.pojos.Movie;
+import com.example.android.flixtrove.service.model.Movie;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -29,10 +29,10 @@ public class MovieRecyclerAdapter
 	 */
 	private List<Movie> movieList;
 
-	private Context context;
+	private final Context context;
 
 	/** Base URL for movie poster */
-	private String POSTER_BASE_URL = "http://image.tmdb.org/t/p/w342//";
+	private final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/w342//";
 
 
 	/**
@@ -79,7 +79,7 @@ public class MovieRecyclerAdapter
 		// Deal with null poster path values
 		if (posterPath == null) {
 			// Set default poster when movie poster unavailable
-			holder.displayMoviePoster.setImageResource(R.drawable.ic_movie_black);
+			holder.displayMoviePoster.setImageResource(R.drawable.ic_movie);
 
 			// Bail early
 			return;
@@ -97,7 +97,7 @@ public class MovieRecyclerAdapter
 	}
 
 	/**
-	 * Return the size of your dataset (invoked by the layout manager)
+	 * Return the size of your data set (invoked by the layout manager)
 	 */
 	@Override
 	public int getItemCount() {

@@ -1,12 +1,9 @@
-package com.example.android.flixtrove.api;
+package com.example.android.flixtrove.service.repository;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MovieApi {
-	/** Base API query url */
-	private static final String BASE_URL = "https://api.themoviedb.org/3/";
-
+public class MovieRepository {
 	/** Retrofit object */
 	private static Retrofit retrofit = null;
 
@@ -14,7 +11,7 @@ public class MovieApi {
 		// When retrofit has not been initialized
 		if (retrofit == null) {
 			retrofit = new Retrofit.Builder()
-					.baseUrl(BASE_URL)
+					.baseUrl(MovieService.BASE_URL)
 					.addConverterFactory(GsonConverterFactory.create())
 					.build();
 		}
