@@ -11,6 +11,18 @@
     <!-- Content description for the image view displaying the movie poster -->
     <string name="poster_content_desc">Movie poster</string>
 
+    <!-- Content description for the movie poster image view -->
+    <string name="movie_poster_iv_content_desc">Image view for the movie poster</string>
 
-    <string name="action_sort">Sort By</string>
+    <!-- Label for the movie's ratings -->
+    <string name="movie_ratings_label">RATINGS:</string>
+
+    <!-- Label for the movie's synopsis -->
+    <string name="movie_synopsis_label">SYNOPSIS:</string>
+
+    <!-- Label for the movie's release date -->
+    <string name="movie_release_date_label">RELEASE DATE:</string>
+
+    <!-- Title for sort menu option item -->
+    <string name="action_sort_by">Sort By</string>
 </resources>

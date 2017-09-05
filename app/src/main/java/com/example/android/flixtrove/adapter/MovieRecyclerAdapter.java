@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
@@ -19,27 +20,31 @@ import butterknife.ButterKnife;
 
 public class MovieRecyclerAdapter
 		extends RecyclerView.Adapter<MovieRecyclerAdapter.posterViewHolder> {
-	/**
-	 * Tag for log messages
-	 */
+	/** Tag for log messages */
 	private static final String TAG = MovieRecyclerAdapter.class.getSimpleName();
 
-	/**
-	 * List of movieList
-	 */
+	/** List of movieList */
 	private List<Movie> movieList;
 
+	/** Application context */
 	private final Context context;
+
+	/** ItemClickListener */
+	private final ListItemClickListener clickListener;
 
 	/** Base URL for movie poster */
 	private final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/w342//";
 
+	public interface ListItemClickListener {
+		void onListItemClick(int clickedItemMovieId);
+	}
 
 	/**
 	 * Create new Movie RecyclerView adapter
 	 */
-	public MovieRecyclerAdapter(Context context) {
+	public MovieRecyclerAdapter(Context context, ListItemClickListener listener) {
 		this.context = context;
+		this.clickListener = listener;
 		this.movieList = new ArrayList<>();
 	}
 
@@ -132,7 +137,9 @@ public class MovieRecyclerAdapter
 	/**
 	 * Provide a reference to the views for each data item via a view holder
 	 */
-	static class posterViewHolder extends RecyclerView.ViewHolder {
+	class posterViewHolder
+			extends RecyclerView.ViewHolder
+			implements OnClickListener {
 		/** Each data item is a movie represented as a movie poster image*/
 		@BindView(R.id.iv_movie_poster)
 		ImageView displayMoviePoster;
@@ -141,6 +148,19 @@ public class MovieRecyclerAdapter
 		public posterViewHolder(View itemView) {
 			super(itemView);
 			ButterKnife.bind(this, itemView);
+			itemView.setOnClickListener(this);
+		}
+
+		@Override
+		public void onClick(View view) {
+			// Get the index of the clicked movie item
+			int clickedPosition = getAdapterPosition();
+
+			// Get the movie id of clicked movie item
+			int movieId = movieList.get(clickedPosition).getId();
+
+			// Set the id on the listener
+			clickListener.onListItemClick(movieId);
 		}
 	}
 }

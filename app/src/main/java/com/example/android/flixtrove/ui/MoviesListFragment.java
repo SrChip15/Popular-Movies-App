@@ -1,6 +1,7 @@
 package com.example.android.flixtrove.ui;
 
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -19,6 +20,7 @@ import android.widget.ProgressBar;
 import com.example.android.flixtrove.PrivateApiKey;
 import com.example.android.flixtrove.R;
 import com.example.android.flixtrove.adapter.MovieRecyclerAdapter;
+import com.example.android.flixtrove.adapter.MovieRecyclerAdapter.ListItemClickListener;
 import com.example.android.flixtrove.adapter.PaginationScrollListener;
 import com.example.android.flixtrove.service.model.MainResponse;
 import com.example.android.flixtrove.service.model.Movie;
@@ -36,8 +38,7 @@ import static android.content.ContentValues.TAG;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MoviesListFragment extends Fragment {
-
+public class MoviesListFragment extends Fragment implements ListItemClickListener {
 	private GridLayoutManager layoutManager;
 
 	private ProgressBar progressBar;
@@ -117,7 +118,7 @@ public class MoviesListFragment extends Fragment {
 					}
 				});
 		// Initialize adapter for recycler view
-		adapter = new MovieRecyclerAdapter(getContext());
+		adapter = new MovieRecyclerAdapter(getContext(), this);
 		recyclerView.setAdapter(adapter);
 		// Enable pagination
 		recyclerView.addOnScrollListener(new PaginationScrollListener(layoutManager) {
@@ -266,5 +267,12 @@ public class MoviesListFragment extends Fragment {
 
 		// Default behaviour
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public void onListItemClick(int clickedItemMovieId) {
+		Intent detailViewRequestIntent = new Intent(getContext(), MovieDetailActivity.class);
+		detailViewRequestIntent.putExtra(MovieDetailFragment.INTENT_MOVIE_ID, clickedItemMovieId);
+		startActivity(detailViewRequestIntent);
 	}
 }
