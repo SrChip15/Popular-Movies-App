@@ -4,11 +4,13 @@ package com.example.android.flixtrove.ui;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -44,6 +46,12 @@ public class MoviesListFragment extends Fragment {
 
 	private MovieService apiConnection;
 
+	public static final String INTENT_SORT_POPULAR_MOVIES = "PopularMovies";
+
+	public static final String INTENT_SORT_TOP_RATED_MOVIES = "TopRatedMovies";
+
+	private String sortAction;
+
 	private boolean isLoading = false;
 
 	private boolean isLastPage = false;
@@ -58,6 +66,11 @@ public class MoviesListFragment extends Fragment {
 		// Required empty public constructor
 	}
 
+	@Override
+	public void onCreate(@Nullable Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setHasOptionsMenu(true);
+	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -174,7 +187,16 @@ public class MoviesListFragment extends Fragment {
 	}
 
 	private Call<MainResponse> callMoviesApi() {
-		return apiConnection.getMovies(PrivateApiKey.YOUR_API_KEY, currentPage, "US");
+		if (sortAction != null && sortAction.equals(INTENT_SORT_TOP_RATED_MOVIES)) {
+			Log.d(TAG, "Fetching Top Rated Movies. Current Page: " + currentPage);
+			return apiConnection.getTopRatedMovies(PrivateApiKey.YOUR_API_KEY, currentPage);
+		} else if (sortAction != null && sortAction.equals(INTENT_SORT_POPULAR_MOVIES)) {
+			Log.d(TAG, "Fetching Popular Movies. Current Page: " + currentPage);
+			return apiConnection.getPopularMovies(PrivateApiKey.YOUR_API_KEY, currentPage);
+		} else {
+			Log.d(TAG, "Fetching Discover Movies. Current Page: " + currentPage);
+			return apiConnection.getMovies(PrivateApiKey.YOUR_API_KEY, currentPage, "US");
+		}
 	}
 
 	private List<Movie> fetchMovies(Response<MainResponse> response) {
@@ -213,4 +235,36 @@ public class MoviesListFragment extends Fragment {
 		});
 	}
 
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.action_top_rated:
+				// User clicked sort by top rated movies menu item
+				sortAction = INTENT_SORT_TOP_RATED_MOVIES;
+
+				// Reset current page
+				currentPage = PAGE_START;
+
+				// Load first page of top rated movies
+				loadFirstPage();
+
+				// Click handled successfully
+				return true;
+			case R.id.action_popular:
+				// User clicked sort by popular movies menu item
+				sortAction = INTENT_SORT_POPULAR_MOVIES;
+
+				// Reset current page
+				currentPage = PAGE_START;
+
+				// Load first page of popular movies
+				loadFirstPage();
+
+				// Click handled successfully
+				return true;
+		}
+
+		// Default behaviour
+		return super.onOptionsItemSelected(item);
+	}
 }

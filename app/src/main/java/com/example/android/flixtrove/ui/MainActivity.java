@@ -17,14 +17,16 @@ public class MainActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
+		// Initialize list view fragment to attach to activity
 		MoviesListFragment listFragment = new MoviesListFragment();
 
+		// Get a reference to the fragment manager to add the list view fragment to screen
 		FragmentManager fragmentManager = getSupportFragmentManager();
 
+		// Fragment transaction for displaying discover/movies API call
 		fragmentManager.beginTransaction()
 				.add(R.id.fragment_list_container, listFragment)
 				.commit();
-
 	}
 
 	@Override
@@ -39,12 +41,11 @@ public class MainActivity extends AppCompatActivity {
 
 		switch (id) {
 			case R.id.action_top_rated:
-				// TODO - display results from movies/top_rated API call
-				return true;
-			case R.id.action_most_popular:
-				// TODO - display results from movies/popular API call
-				// Display popular movies
-				return true;
+				// Fragment handles this
+				return false;
+			case R.id.action_popular:
+				// Fragment handles this
+				return false;
 		}
 
 		// Android framework handles default

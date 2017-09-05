@@ -23,8 +23,8 @@ public interface MovieService {
 			@Query("page") int pageNumber
 	);
 
-	@GET("movie/most_popular")
-	Call<MainResponse> getMostPopularMovies(
+	@GET("movie/popular")
+	Call<MainResponse> getPopularMovies(
 			@Query("api_key") String apiKey,
 			@Query("page") int pageNumber
 	);

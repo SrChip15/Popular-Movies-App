@@ -20,9 +20,9 @@
                 app:showAsAction="never"/>
 
             <item
-                android:id="@+id/action_most_popular"
+                android:id="@+id/action_popular"
                 android:orderInCategory="2"
-                android:title="@string/action_most_popular"
+                android:title="@string/action_popular"
                 app:showAsAction="never"/>
         </menu>
 
