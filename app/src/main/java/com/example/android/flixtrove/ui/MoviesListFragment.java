@@ -2,7 +2,6 @@ package com.example.android.flixtrove.ui;
 
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -26,6 +25,8 @@ import com.example.android.flixtrove.service.model.MainResponse;
 import com.example.android.flixtrove.service.model.Movie;
 import com.example.android.flixtrove.service.repository.MovieRepository;
 import com.example.android.flixtrove.service.repository.MovieService;
+import com.example.android.flixtrove.ui.detail.MovieDetailActivity;
+import com.example.android.flixtrove.ui.detail.MovieDetailFragment;
 
 import java.util.List;
 
@@ -100,21 +101,20 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
 				new ViewTreeObserver.OnGlobalLayoutListener() {
 					@Override
 					public void onGlobalLayout() {
-						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-							// This works only for devices with at least Jelly Bean or above
-							recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+						// This works only for devices with at least Jelly Bean or above
+						recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
-							int viewWidth = recyclerView.getMeasuredWidth();
+						int viewWidth = recyclerView.getMeasuredWidth();
 
-							float posterImageWidth = getResources()
-									.getDimension(R.dimen.poster_width);
+						float posterImageWidth = getResources()
+								.getDimension(R.dimen.poster_width);
 
-							int newSpanCount = (int) Math.floor(viewWidth / posterImageWidth);
+						int newSpanCount = (int) Math.floor(viewWidth / posterImageWidth);
 
-							layoutManager.setSpanCount(newSpanCount);
+						layoutManager.setSpanCount(newSpanCount);
 
-							layoutManager.requestLayout();
-						}
+						layoutManager.requestLayout();
+
 					}
 				});
 		// Initialize adapter for recycler view

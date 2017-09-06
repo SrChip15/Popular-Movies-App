@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.android.flixtrove.R;
+import com.example.android.flixtrove.ui.detail.MovieDetailFragment;
 
 public class MainActivity extends AppCompatActivity {
 	private Intent intent;

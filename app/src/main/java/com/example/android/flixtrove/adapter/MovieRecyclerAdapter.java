@@ -33,7 +33,10 @@ public class MovieRecyclerAdapter
 	private final ListItemClickListener clickListener;
 
 	/** Base URL for movie poster */
-	private final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/w342//";
+	private static final String POSTER_IMAGE_BASE_URL = "http://image.tmdb.org/t/p/";
+
+	/** Movie poster size */
+	private static final String POSTER_IMAGE_SIZE = "w780";
 
 	public interface ListItemClickListener {
 		void onListItemClick(int clickedItemMovieId);
@@ -91,7 +94,7 @@ public class MovieRecyclerAdapter
 		}
 
 		// If valid poster path exists for movie, append the same to the url
-		String moviePosterUrl = POSTER_BASE_URL + posterPath;
+		String moviePosterUrl = POSTER_IMAGE_BASE_URL + POSTER_IMAGE_SIZE + posterPath;
 
 		// Construct movie poster final url
 		Picasso.with(context)
@@ -141,7 +144,7 @@ public class MovieRecyclerAdapter
 			extends RecyclerView.ViewHolder
 			implements OnClickListener {
 		/** Each data item is a movie represented as a movie poster image*/
-		@BindView(R.id.iv_movie_poster)
+		@BindView(R.id.grid_movie_poster_iv)
 		ImageView displayMoviePoster;
 
 		/** Initialize view and cache reference hooks  */

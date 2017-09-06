@@ -1,22 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Layout for individual movie posters -->
-<FrameLayout
+<com.example.android.flixtrove.ui.PosterImageView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="@dimen/poster_width"
-    android:layout_height="@dimen/poster_height"
-    android:layout_marginLeft="1dp"
-    android:layout_marginTop="1dp">
+    android:id="@+id/grid_movie_poster_iv"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="1dp"
+    android:adjustViewBounds="true"
+    android:contentDescription="@string/poster_content_desc"/>
 
-    <!-- Movie poster view -->
-    <ImageView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/iv_movie_poster"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginRight="1dp"
-        android:contentDescription="@string/poster_content_desc"
-        android:scaleType="centerCrop"/>
 
-</FrameLayout>
+
 
 

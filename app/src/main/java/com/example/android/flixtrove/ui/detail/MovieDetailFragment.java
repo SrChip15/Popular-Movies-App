@@ -1,4 +1,4 @@
-package com.example.android.flixtrove.ui;
+package com.example.android.flixtrove.ui.detail;
 
 
 import android.content.Intent;
@@ -45,7 +45,7 @@ public class MovieDetailFragment extends Fragment {
 
 	private int movieId;
 
-	@BindView(R.id.movie_poster_iv)
+	@BindView(R.id.detail_movie_poster_iv)
 	ImageView moviePosterImageView;
 
 	@BindView(R.id.movie_vote_average_rb)

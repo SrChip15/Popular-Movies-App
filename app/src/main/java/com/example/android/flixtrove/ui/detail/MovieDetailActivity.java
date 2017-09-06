@@ -1,4 +1,4 @@
-package com.example.android.flixtrove.ui;
+package com.example.android.flixtrove.ui.detail;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;

@@ -1,117 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:scrollbars="vertical">
 
-    <!-- Bleeding movie poster image -->
-    <ImageView
-        android:id="@+id/movie_poster_iv"
-        android:layout_width="match_parent"
-        android:layout_height="280dp"
-        android:contentDescription="@string/movie_poster_iv_content_desc"
-        android:scaleType="centerCrop"/>
-
-    <android.support.v7.widget.CardView
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardMaxElevation="5dp"
-        app:cardUseCompatPadding="true">
+        android:orientation="vertical">
 
-        <LinearLayout
+        <!-- Bleeding movie poster image -->
+        <ImageView
+            android:id="@+id/detail_movie_poster_iv"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:layout_height="280dp"
+            android:contentDescription="@string/movie_poster_iv_content_desc"
+            android:scaleType="centerCrop"/>
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardMaxElevation="5dp"
+            app:cardUseCompatPadding="true">
 
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <!-- Ratings Label -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginTop="10dp"
-                    android:fontFamily="sans-serif-smallcaps"
-                    android:text="@string/movie_ratings_label"/>
-
-                <!-- Release date Label -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginTop="10dp"
-
-                    android:fontFamily="sans-serif-smallcaps"
-                    android:text="@string/movie_release_date_label"/>
-
-                <!-- Synopsis Label -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginTop="10dp"
-
-                    android:fontFamily="sans-serif-smallcaps"
-                    android:text="@string/movie_synopsis_label"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="2"
-                android:orientation="vertical">
+                android:orientation="horizontal">
 
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:orientation="horizontal">
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-                    <!-- Average votes for the movie -->
-                    <RatingBar
-                        android:id="@+id/movie_vote_average_rb"
-                        style="?android:ratingBarStyleSmall"
+                    <!-- Ratings Label -->
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:numStars="5"/>
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginTop="10dp"
+                        android:fontFamily="sans-serif-smallcaps"
+                        android:text="@string/movie_ratings_label"/>
 
-                    <!-- Number of vote counts -->
+                    <!-- Release date Label -->
                     <TextView
-                        android:id="@+id/movie_vote_count_tv"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginTop="10dp"
+
+                        android:fontFamily="sans-serif-smallcaps"
+                        android:text="@string/movie_release_date_label"/>
+
+                    <!-- Synopsis Label -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginTop="10dp"
+
+                        android:fontFamily="sans-serif-smallcaps"
+                        android:text="@string/movie_synopsis_label"/>
 
                 </LinearLayout>
 
-                <!-- Movie's release date -->
-                <TextView
-                    android:id="@+id/movie_release_date_tv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:fontFamily="sans-serif"/>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:orientation="vertical">
 
-                <!-- Movie plot synopsis -->
-                <TextView
-                    android:id="@+id/movie_plot_synopsis_tv"
-                    style="?android:textAppearanceMedium"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:fontFamily="sans-serif-condensed"
-                    android:scrollbars="vertical"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:orientation="horizontal">
+
+                        <!-- Average votes for the movie -->
+                        <RatingBar
+                            android:id="@+id/movie_vote_average_rb"
+                            style="?android:ratingBarStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:numStars="5"/>
+
+                        <!-- Number of vote counts -->
+                        <TextView
+                            android:id="@+id/movie_vote_count_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                    </LinearLayout>
+
+                    <!-- Movie's release date -->
+                    <TextView
+                        android:id="@+id/movie_release_date_tv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="sans-serif"/>
+
+                    <!-- Movie plot synopsis -->
+                    <TextView
+                        android:id="@+id/movie_plot_synopsis_tv"
+                        style="?android:textAppearanceMedium"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="sans-serif-condensed"
+                        android:scrollbars="vertical"/>
+
+                </LinearLayout>
 
             </LinearLayout>
 
-        </LinearLayout>
+        </android.support.v7.widget.CardView>
 
-    </android.support.v7.widget.CardView>
+    </LinearLayout>
 
-</LinearLayout>
+</ScrollView>
