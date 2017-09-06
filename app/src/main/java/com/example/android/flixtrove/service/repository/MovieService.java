@@ -8,6 +8,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
+@SuppressWarnings("SameParameterValue")
 public interface MovieService {
 
 	String BASE_URL = "https://api.themoviedb.org/3/";

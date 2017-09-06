@@ -11,7 +11,6 @@ import com.example.android.flixtrove.R;
 import com.example.android.flixtrove.ui.detail.MovieDetailFragment;
 
 public class MainActivity extends AppCompatActivity {
-	private Intent intent;
 	/**
 	 * Tag for log messages
 	 */
@@ -43,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
+		Intent intent = getIntent();
 		// Disable sort menu for detailed pane
 		if (intent != null && intent.hasExtra(MovieDetailFragment.INTENT_MOVIE_ID)) {
 			menu.removeItem(R.id.action_sort);
