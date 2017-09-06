@@ -6,10 +6,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.example.android.flixtrove.R;
 import com.example.android.flixtrove.service.model.Movie;
+import com.example.android.flixtrove.ui.PosterImageView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MovieRecyclerAdapter
-		extends RecyclerView.Adapter<MovieRecyclerAdapter.posterViewHolder> {
+		extends RecyclerView.Adapter<MovieRecyclerAdapter.PosterViewHolder> {
 	/** Tag for log messages */
 	private static final String TAG = MovieRecyclerAdapter.class.getSimpleName();
 
@@ -55,7 +55,7 @@ public class MovieRecyclerAdapter
 	 * Create new views (invoked by the layout manager)
 	 */
 	@Override
-	public posterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+	public PosterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 		// Get context of the parent ViewGroup
 		Context context = parent.getContext();
 
@@ -70,14 +70,14 @@ public class MovieRecyclerAdapter
 						shouldAttachToParentImmediately);
 
 		// Return the inflated item view
-		return new posterViewHolder(itemView);
+		return new PosterViewHolder(itemView);
 	}
 
 	/**
 	 * Replace the contents of a view (invoked by the layout manager)
 	 */
 	@Override
-	public void onBindViewHolder(posterViewHolder holder, int position) {
+	public void onBindViewHolder(PosterViewHolder holder, int position) {
 		// Get the movie at position
 		Movie movieAtScrollPosition = this.movieList.get(position);
 
@@ -118,6 +118,7 @@ public class MovieRecyclerAdapter
 	public void clear() {
 		// Clear our adapter's data set
 		this.movieList = new ArrayList<>();
+		notifyDataSetChanged();
 	}
 
 	/**
@@ -140,15 +141,15 @@ public class MovieRecyclerAdapter
 	/**
 	 * Provide a reference to the views for each data item via a view holder
 	 */
-	class posterViewHolder
+	class PosterViewHolder
 			extends RecyclerView.ViewHolder
 			implements OnClickListener {
-		/** Each data item is a movie represented as a movie poster image*/
+		/** Each data item is a movie represented as a movie poster image */
 		@BindView(R.id.grid_movie_poster_iv)
-		ImageView displayMoviePoster;
+		PosterImageView displayMoviePoster;
 
 		/** Initialize view and cache reference hooks  */
-		public posterViewHolder(View itemView) {
+		public PosterViewHolder(View itemView) {
 			super(itemView);
 			ButterKnife.bind(this, itemView);
 			itemView.setOnClickListener(this);

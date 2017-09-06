@@ -3,6 +3,21 @@
     <!-- Width of the movie poster -->
     <dimen name="poster_width">200dp</dimen>
 
-    <!-- Height of the movie poster -->
-    <dimen name="poster_height">300dp</dimen>
+    <!-- Margin for the individual movie posters in the grid view (Master View) -->
+    <dimen name="grid_poster_margin">1dp</dimen>
+
+    <!-- Height of the movie poster in the detailed pane (Detail View) -->
+    <dimen name="detail_movie_poster_iv_height">280dp</dimen>
+
+    <!-- Left margin for the ratings label in the detailed pane -->
+    <dimen name="detail_label_margin_left">8dp</dimen>
+
+    <!-- Top margin for the ratings label in the detailed pane -->
+    <dimen name="detail_label_margin_top">10dp</dimen>
+
+    <!-- Top margin for children in the movie information container in the detailed pane -->
+    <dimen name="detail_movie_info_top_margin">8dp</dimen>
+
+    <!-- Small margin to de-clutter views -->
+    <dimen name="small_margin">1dp</dimen>
 </resources>

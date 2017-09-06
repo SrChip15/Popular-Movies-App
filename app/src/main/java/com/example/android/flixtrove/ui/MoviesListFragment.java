@@ -13,7 +13,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
+import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.ProgressBar;
 
 import com.example.android.flixtrove.PrivateApiKey;
@@ -30,6 +30,8 @@ import com.example.android.flixtrove.ui.detail.MovieDetailFragment;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -39,29 +41,46 @@ import static android.content.ContentValues.TAG;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MoviesListFragment extends Fragment implements ListItemClickListener {
+public class MoviesListFragment
+		extends Fragment
+		implements ListItemClickListener, OnGlobalLayoutListener {
+	/** Layout manager for recycler view */
 	private GridLayoutManager layoutManager;
 
-	private ProgressBar progressBar;
+	/** Recycler view to display grid of movie posters */
+	@BindView(R.id.recycler_view)
+	RecyclerView recyclerView;
 
+	/** Movie poster buffer indicator */
+	@BindView(R.id.main_progress_bar)
+	ProgressBar progressBar;
+
+	/** Adapter for the view */
 	private MovieRecyclerAdapter adapter;
 
+	/** Movie API service */
 	private MovieService apiConnection;
 
+	/** Tag for popular movies sort option */
 	public static final String INTENT_SORT_POPULAR_MOVIES = "PopularMovies";
 
+	/** Tag for top rated movies sort option */
 	public static final String INTENT_SORT_TOP_RATED_MOVIES = "TopRatedMovies";
 
+	/** String to store sort option tag */
 	private String sortAction;
 
+	/** Flag for paginated scroll listener */
 	private boolean isLoading = false;
-
 	private boolean isLastPage = false;
 
+	/** Total number of movie pages from the API */
 	private int totalPages;
 
+	/** Default constant value for current page */
 	private static final int PAGE_START = 1;
 
+	/** Store current movie page that is being parsed */
 	private int currentPage = PAGE_START;
 
 	public MoviesListFragment() {
@@ -72,6 +91,7 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
 	public void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(true);
+		setRetainInstance(true);
 	}
 
 	@Override
@@ -80,47 +100,19 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
 		// Inflate grid view fragment layout
 		View rootView = inflater.inflate(R.layout.fragment_grid_view, container, false);
 
-		// Get a reference to the recycler view
-		final RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
-
-		// Get a reference to the progress bar
-		progressBar = (ProgressBar) rootView.findViewById(R.id.main_progress_bar);
+		// Get all references to relevant views
+		ButterKnife.bind(this, rootView);
 
 		// Configure recycler view
 		recyclerView.setHasFixedSize(true);
-		// Configure layout manager
-		layoutManager = new GridLayoutManager(
-				getContext(),
-				1,
-				GridLayoutManager.VERTICAL,
-				false
-		);
+		// Prepare the layout manager and hand it over to the view
+		prepareLayout();
 		recyclerView.setLayoutManager(layoutManager);
-		// Handle span count to support different screen sizes
-		recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(
-				new ViewTreeObserver.OnGlobalLayoutListener() {
-					@Override
-					public void onGlobalLayout() {
-						// This works only for devices with at least Jelly Bean or above
-						recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-
-						int viewWidth = recyclerView.getMeasuredWidth();
-
-						float posterImageWidth = getResources()
-								.getDimension(R.dimen.poster_width);
-
-						int newSpanCount = (int) Math.floor(viewWidth / posterImageWidth);
-
-						layoutManager.setSpanCount(newSpanCount);
-
-						layoutManager.requestLayout();
-
-					}
-				});
 		// Initialize adapter for recycler view
 		adapter = new MovieRecyclerAdapter(getContext(), this);
 		recyclerView.setAdapter(adapter);
-		// Enable pagination
+
+		// Add scroll listener and enable pagination
 		recyclerView.addOnScrollListener(new PaginationScrollListener(layoutManager) {
 			@Override
 			protected void loadMoreItems() {
@@ -146,19 +138,16 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
 			}
 		});
 
-		// Connect to the api
-		apiConnection = MovieRepository.getClient().create(MovieService.class);
-
 		// Connect to API and fetch results
+		apiConnection = MovieRepository.getClient().create(MovieService.class);
 		loadFirstPage();
 
 		// Return root view
 		return rootView;
-
 	}
 
 	private void loadFirstPage() {
-		// Clear old data
+		// Clear existing data
 		adapter.clear();
 
 		// Make network call
@@ -213,6 +202,7 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
 	}
 
 	private void loadNextPage() {
+		// Make network call
 		callMoviesApi().enqueue(new Callback<MainResponse>() {
 			@Override
 			public void onResponse(
@@ -242,25 +232,20 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
 			case R.id.action_top_rated:
 				// User clicked sort by top rated movies menu item
 				sortAction = INTENT_SORT_TOP_RATED_MOVIES;
-
 				// Reset current page
 				currentPage = PAGE_START;
-
 				// Load first page of top rated movies
 				loadFirstPage();
-
 				// Click handled successfully
 				return true;
+
 			case R.id.action_popular:
 				// User clicked sort by popular movies menu item
 				sortAction = INTENT_SORT_POPULAR_MOVIES;
-
 				// Reset current page
 				currentPage = PAGE_START;
-
 				// Load first page of popular movies
 				loadFirstPage();
-
 				// Click handled successfully
 				return true;
 		}
@@ -269,10 +254,46 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
 		return super.onOptionsItemSelected(item);
 	}
 
+	private void prepareLayout() {
+		// Configure layout manager
+		layoutManager = new GridLayoutManager(
+				getContext(),
+				1,
+				GridLayoutManager.VERTICAL,
+				false
+		);
+
+		// Handle span count to support different screen sizes
+		recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(this);
+	}
+
 	@Override
 	public void onListItemClick(int clickedItemMovieId) {
+		// Build intent to fire detailed pane
 		Intent detailViewRequestIntent = new Intent(getContext(), MovieDetailActivity.class);
+
+		// Pass in the movie ID that was clicked to get the relevant movie details
 		detailViewRequestIntent.putExtra(MovieDetailFragment.INTENT_MOVIE_ID, clickedItemMovieId);
+
 		startActivity(detailViewRequestIntent);
+	}
+
+	@Override
+	public void onGlobalLayout() {
+		// This works only for devices with at least Jelly Bean or above
+		recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+		// Width of the recycler view
+		int viewWidth = recyclerView.getMeasuredWidth();
+
+		// Poster width
+		float posterImageWidth = getResources().getDimension(R.dimen.poster_width);
+
+		// Find how many posters can be accommodated within the recycler view
+		int newSpanCount = (int) Math.floor(viewWidth / posterImageWidth);
+
+		// Set calculated span count on the layout manager
+		layoutManager.setSpanCount(newSpanCount);
+		layoutManager.requestLayout();
 	}
 }

@@ -5,7 +5,7 @@
     android:id="@+id/grid_movie_poster_iv"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="1dp"
+    android:layout_margin="@dimen/grid_poster_margin"
     android:adjustViewBounds="true"
     android:contentDescription="@string/poster_content_desc"/>
 

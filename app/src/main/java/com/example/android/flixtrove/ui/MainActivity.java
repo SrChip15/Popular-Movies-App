@@ -22,24 +22,17 @@ public class MainActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		// Initialize list view fragment to attach to activity
-		MoviesListFragment listFragment = new MoviesListFragment();
-		MovieDetailFragment detailFragment = new MovieDetailFragment();
-
 		// Get a reference to the fragment manager to add the list view fragment to screen
 		FragmentManager fragmentManager = getSupportFragmentManager();
 
-		// Fragment transaction for displaying discover/movies API call
-		intent = getIntent();
-		if (intent != null && intent.hasExtra(MovieDetailFragment.INTENT_MOVIE_ID)) {
-			fragmentManager.beginTransaction()
-					.add(R.id.fragment_container, detailFragment)
-					.commit();
-		} else {
-			fragmentManager.beginTransaction()
-					.add(R.id.fragment_container, listFragment)
-					.commit();
-		}
+		// Initialize list view fragment
+		MoviesListFragment listFragment = new MoviesListFragment();
+
+		// Fragment transaction
+		listFragment = new MoviesListFragment();
+		fragmentManager.beginTransaction()
+				.add(R.id.fragment_container, listFragment)
+				.commit();
 	}
 
 	@Override
