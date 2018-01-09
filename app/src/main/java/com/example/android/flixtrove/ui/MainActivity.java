@@ -28,7 +28,6 @@ public class MainActivity extends AppCompatActivity {
 		MoviesListFragment listFragment = new MoviesListFragment();
 
 		// Fragment transaction
-		listFragment = new MoviesListFragment();
 		fragmentManager.beginTransaction()
 				.add(R.id.fragment_container, listFragment)
 				.commit();

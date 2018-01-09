@@ -92,6 +92,7 @@ public class MoviesListFragment
 		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(true);
 		setRetainInstance(true);
+
 	}
 
 	@Override

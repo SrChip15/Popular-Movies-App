@@ -27,6 +27,8 @@ public abstract class PaginationScrollListener extends RecyclerView.OnScrollList
 		}
 	}
 
+	// TODO - Enable upward pagination also
+
 	protected abstract void loadMoreItems();
 
 	public abstract int getTotalPageCount();
