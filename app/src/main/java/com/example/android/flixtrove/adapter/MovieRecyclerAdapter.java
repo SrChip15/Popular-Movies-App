@@ -1,6 +1,7 @@
 package com.example.android.flixtrove.adapter;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,152 +20,118 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MovieRecyclerAdapter
-		extends RecyclerView.Adapter<MovieRecyclerAdapter.PosterViewHolder> {
-	/** Tag for log messages */
-	private static final String TAG = MovieRecyclerAdapter.class.getSimpleName();
+        extends RecyclerView.Adapter<MovieRecyclerAdapter.PosterViewHolder> {
 
-	/** List of movieList */
-	private List<Movie> movieList;
+    /** List of movieList */
+    private List<Movie> movieList;
 
-	/** Application context */
-	private final Context context;
+    /** Application context */
+    private final Context context;
 
-	/** ItemClickListener */
-	private final ListItemClickListener clickListener;
+    /** ItemClickListener */
+    private final ListItemClickListener clickListener;
 
-	/** Base URL for movie poster */
-	private static final String POSTER_IMAGE_BASE_URL = "http://image.tmdb.org/t/p/";
+    /** Base URL for movie poster */
+    private static final String POSTER_IMAGE_BASE_URL = "http://image.tmdb.org/t/p/";
 
-	/** Movie poster size */
-	private static final String POSTER_IMAGE_SIZE = "w780";
+    /** Movie poster size */
+    private static final String POSTER_IMAGE_SIZE = "w780";
 
-	public interface ListItemClickListener {
-		void onListItemClick(int clickedItemMovieId);
-	}
+    public interface ListItemClickListener {
+        void onListItemClick(int clickedItemMovieId);
+    }
 
-	/**
-	 * Create new Movie RecyclerView adapter
-	 */
-	public MovieRecyclerAdapter(Context context, ListItemClickListener listener) {
-		this.context = context;
-		this.clickListener = listener;
-		this.movieList = new ArrayList<>();
-	}
+    /** Create new Movie RecyclerView adapter */
+    public MovieRecyclerAdapter(Context context, ListItemClickListener listener) {
+        this.context = context;
+        this.clickListener = listener;
+        this.movieList = new ArrayList<>();
+    }
 
-	/**
-	 * Create new views (invoked by the layout manager)
-	 */
-	@Override
-	public PosterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-		// Get context of the parent ViewGroup
-		Context context = parent.getContext();
+    /** Create new views (invoked by the layout manager) */
+    @NonNull
+    @Override
+    public PosterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        // Create and inflate view for each data item in the list
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View itemView = inflater.inflate(R.layout.list_item, parent, false);
 
-		// Let the adapter view handle attaching to parent
-		boolean shouldAttachToParentImmediately = false;
+        // Return the inflated item view
+        return new PosterViewHolder(itemView);
+    }
 
-		// Create and inflate view for each data item in the list
-		View itemView = LayoutInflater.from(context).inflate
-				(
-						R.layout.list_item,
-						parent,
-						shouldAttachToParentImmediately);
+    /** Replace the contents of a view (invoked by the layout manager) */
+    @Override
+    public void onBindViewHolder(@NonNull PosterViewHolder holder, int position) {
+        // Get the movie at position
+        Movie movieAtScrollPosition = this.movieList.get(position);
 
-		// Return the inflated item view
-		return new PosterViewHolder(itemView);
-	}
+        // Get the path of the current movie's poster
+        String posterPath = movieAtScrollPosition.getPosterPath();
 
-	/**
-	 * Replace the contents of a view (invoked by the layout manager)
-	 */
-	@Override
-	public void onBindViewHolder(PosterViewHolder holder, int position) {
-		// Get the movie at position
-		Movie movieAtScrollPosition = this.movieList.get(position);
+        // Deal with null poster path values
+        if (posterPath == null) {
+            // Set default poster when movie poster unavailable
+            holder.displayMoviePoster.setImageResource(R.drawable.ic_movie);
 
-		// Get the path of the current movie's poster
-		String posterPath = movieAtScrollPosition.getPosterPath();
+            // Bail early
+            return;
+        }
 
-		// Deal with null poster path values
-		if (posterPath == null) {
-			// Set default poster when movie poster unavailable
-			holder.displayMoviePoster.setImageResource(R.drawable.ic_movie);
+        // If valid poster path exists for movie, append the same to the url
+        String moviePosterUrl = POSTER_IMAGE_BASE_URL + POSTER_IMAGE_SIZE + posterPath;
 
-			// Bail early
-			return;
-		}
+        // Construct movie poster final url
+        Picasso.with(context)
+                .load(moviePosterUrl)
+                .placeholder(android.R.drawable.sym_def_app_icon)
+                .error(android.R.drawable.sym_def_app_icon)
+                .into(holder.displayMoviePoster);
+    }
 
-		// If valid poster path exists for movie, append the same to the url
-		String moviePosterUrl = POSTER_IMAGE_BASE_URL + POSTER_IMAGE_SIZE + posterPath;
+    /** Return the size of your data set (invoked by the layout manager) */
+    @Override
+    public int getItemCount() {
+        return this.movieList.size();
+    }
 
-		// Construct movie poster final url
-		Picasso.with(context)
-				.load(moviePosterUrl)
-				.placeholder(android.R.drawable.sym_def_app_icon)
-				.error(android.R.drawable.sym_def_app_icon)
-				.into(holder.displayMoviePoster);
-	}
+    /** Helper method to clear adapter's old data */
+    public void clear() {
+        // Clear our adapter's data set
+        this.movieList = new ArrayList<>();
+        notifyDataSetChanged();
+    }
 
-	/**
-	 * Return the size of your data set (invoked by the layout manager)
-	 */
-	@Override
-	public int getItemCount() {
-		return this.movieList.size();
-	}
+    /** Helper method to add all movieList from a list into the adapter's data set */
+    public void addAll(List<Movie> movies) {
+        if (movies != null && !movies.isEmpty()) {
+            // Add all movies
+            movieList.addAll(movies);
 
-	/**
-	 * Helper method to clear adapter's old data
-	 */
-	public void clear() {
-		// Clear our adapter's data set
-		this.movieList = new ArrayList<>();
-		notifyDataSetChanged();
-	}
+            notifyDataSetChanged();
+        }
+    }
 
-	/**
-	 * Helper method to add all movieList from a list into the adapter's data set
-	 */
-	public void addAll(List<Movie> movies) {
-		// Traverse the movie list
-		if (movies != null && !movies.isEmpty()) {
-			for (Movie movie : movies) {
-				// Add each movie
-				this.movieList.add(movie);
-			}
+    /** Provide a reference to the views for each data item via a view holder */
+    class PosterViewHolder
+            extends RecyclerView.ViewHolder
+            implements OnClickListener {
+        /** Each data item is a movie represented as a movie poster image */
+        @BindView(R.id.grid_movie_poster_iv)
+        PosterImageView displayMoviePoster;
 
-			// Inform adapter of the updated data set
-			// This triggers reloading of the UI view
-			notifyDataSetChanged();
-		}
-	}
+        /** Initialize view and cache reference hooks */
+        PosterViewHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+            itemView.setOnClickListener(this);
+        }
 
-	/**
-	 * Provide a reference to the views for each data item via a view holder
-	 */
-	class PosterViewHolder
-			extends RecyclerView.ViewHolder
-			implements OnClickListener {
-		/** Each data item is a movie represented as a movie poster image */
-		@BindView(R.id.grid_movie_poster_iv)
-		PosterImageView displayMoviePoster;
-
-		/** Initialize view and cache reference hooks  */
-		public PosterViewHolder(View itemView) {
-			super(itemView);
-			ButterKnife.bind(this, itemView);
-			itemView.setOnClickListener(this);
-		}
-
-		@Override
-		public void onClick(View view) {
-			// Get the index of the clicked movie item
-			int clickedPosition = getAdapterPosition();
-
-			// Get the movie id of clicked movie item
-			int movieId = movieList.get(clickedPosition).getId();
-
-			// Set the id on the listener
-			clickListener.onListItemClick(movieId);
-		}
-	}
+        @Override
+        public void onClick(View view) {
+            int clickedPosition = getAdapterPosition();
+            int movieId = movieList.get(clickedPosition).getId();
+            clickListener.onListItemClick(movieId);
+        }
+    }
 }
