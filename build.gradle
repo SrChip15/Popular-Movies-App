@@ -23,3 +23,17 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+ext {
+    // SDK
+    compileSdk = 27
+    minSdk = 19
+    targetSdk = 27
+
+    // Dependencies
+    supportLib = '27.1.1'
+    butterKnife = '8.8.1'
+    retrofit = '2.4.0'
+    picasso = '2.71828'
+    junit = '4.12'
+}
