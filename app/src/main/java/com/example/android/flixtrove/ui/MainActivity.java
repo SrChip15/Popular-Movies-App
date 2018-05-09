@@ -11,10 +11,6 @@ import com.example.android.flixtrove.R;
 import com.example.android.flixtrove.ui.detail.MovieDetailFragment;
 
 public class MainActivity extends AppCompatActivity {
-	/**
-	 * Tag for log messages
-	 */
-	private static final String TAG = MainActivity.class.getSimpleName();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

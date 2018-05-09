@@ -4,9 +4,9 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 public abstract class PaginationScrollListener extends RecyclerView.OnScrollListener {
-	final GridLayoutManager layoutManager;
+	private final GridLayoutManager layoutManager;
 
-	public PaginationScrollListener(GridLayoutManager layoutManager) {
+	protected PaginationScrollListener(GridLayoutManager layoutManager) {
 		this.layoutManager = layoutManager;
 	}
 
@@ -31,6 +31,7 @@ public abstract class PaginationScrollListener extends RecyclerView.OnScrollList
 
 	protected abstract void loadMoreItems();
 
+	@SuppressWarnings("unused")
 	public abstract int getTotalPageCount();
 
 	public abstract boolean isLastPage();

@@ -26,6 +26,7 @@ public class MovieDetailActivity extends AppCompatActivity {
 	}
 
 	/** Helper method to set movie title as the action bar title from the detailed pane fragment */
+	@SuppressWarnings("ConstantConditions")
 	public void setActionBarTitle(String title) {
 		getSupportActionBar().setTitle(title);
 	}

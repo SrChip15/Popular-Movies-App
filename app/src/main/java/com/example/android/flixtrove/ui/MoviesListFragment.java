@@ -96,8 +96,8 @@ public class MoviesListFragment
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-	                         Bundle savedInstanceState) {
+	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+							 Bundle savedInstanceState) {
 		// Inflate grid view fragment layout
 		View rootView = inflater.inflate(R.layout.fragment_grid_view, container, false);
 
