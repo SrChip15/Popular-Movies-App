@@ -33,6 +33,7 @@ import retrofit2.Response;
 /**
  * A simple {@link Fragment} subclass.
  */
+@SuppressWarnings("ConstantConditions")
 public class MovieDetailFragment extends Fragment {
 	private static final String TAG = MovieDetailFragment.class.getSimpleName();
 
@@ -72,8 +73,8 @@ public class MovieDetailFragment extends Fragment {
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-	                         Bundle savedInstanceState) {
+	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+							 Bundle savedInstanceState) {
 		// Inflate detailed pane fragment layout
 		View rootView = inflater.inflate(R.layout.fragment_detail_view, container, false);
 
@@ -105,7 +106,7 @@ public class MovieDetailFragment extends Fragment {
 				MovieDetailResponse movie = fetchMovie(response);
 
 				// Set movie poster
-				Picasso.with(getContext())
+				Picasso.get()
 						.load(POSTER_IMAGE_BASE_URL + POSTER_IMAGE_SIZE + movie.getBackdropPath())
 						.into(moviePosterImageView);
 
@@ -118,7 +119,7 @@ public class MovieDetailFragment extends Fragment {
 				voteAverageRatingBar.setRating(convertedRating);
 
 				// Set vote count
-				voteCountTextView.setText("(" + movie.getVoteCount() + ")");
+				voteCountTextView.setText(getString(R.string.rating_count, movie.getVoteCount()));
 
 				// Set release date
 				releaseDateTextView.setText(movie.getReleaseDate());

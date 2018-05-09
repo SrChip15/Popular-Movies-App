@@ -82,7 +82,7 @@ public class MovieRecyclerAdapter
         String moviePosterUrl = POSTER_IMAGE_BASE_URL + POSTER_IMAGE_SIZE + posterPath;
 
         // Construct movie poster final url
-        Picasso.with(context)
+        Picasso.get()
                 .load(moviePosterUrl)
                 .placeholder(android.R.drawable.sym_def_app_icon)
                 .error(android.R.drawable.sym_def_app_icon)

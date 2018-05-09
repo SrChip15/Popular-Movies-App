@@ -25,4 +25,7 @@
 
     <!-- Title for sort menu option item -->
     <string name="action_sort_by">Sort By</string>
+
+    <!-- Rating count formatted string in detail fragment -->
+    <string name="rating_count" translatable="false">(%1$d)</string>
 </resources>
