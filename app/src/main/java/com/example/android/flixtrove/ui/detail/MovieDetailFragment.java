@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,38 +28,31 @@ import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import timber.log.Timber;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 @SuppressWarnings("ConstantConditions")
 public class MovieDetailFragment extends Fragment {
-	private static final String TAG = MovieDetailFragment.class.getSimpleName();
-
+	/* Class Constants */
 	public static final String INTENT_MOVIE_ID = "movie_id";
-
 	private static final String POSTER_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/";
 	private static final String POSTER_IMAGE_SIZE = "w780";
 
-	private MovieService apiConnection;
-
-	private int movieId;
-
+	/* Class variables */
 	@BindView(R.id.detail_movie_poster_iv)
 	ImageView moviePosterImageView;
-
 	@BindView(R.id.movie_vote_average_rb)
 	RatingBar voteAverageRatingBar;
-
 	@BindView(R.id.movie_vote_count_tv)
 	TextView voteCountTextView;
-
 	@BindView(R.id.movie_release_date_tv)
 	TextView releaseDateTextView;
-
 	@BindView(R.id.movie_plot_synopsis_tv)
 	TextView plotSynopsisTextView;
-
+	private MovieService apiConnection;
+	private int movieId;
 
 	public MovieDetailFragment() {
 		// Required empty public constructor
@@ -103,7 +95,10 @@ public class MovieDetailFragment extends Fragment {
 			public void onResponse(@NonNull Call<MovieDetailResponse> call,
 			                       @NonNull Response<MovieDetailResponse> response) {
 				// Get the movie
-				MovieDetailResponse movie = fetchMovie(response);
+				MovieDetailResponse movie = response.body();
+
+				Timber.d("Getting image from: %s", POSTER_IMAGE_BASE_URL +
+						POSTER_IMAGE_SIZE + movie.getBackdropPath());
 
 				// Set movie poster
 				Picasso.get()
@@ -134,7 +129,7 @@ public class MovieDetailFragment extends Fragment {
 
 			@Override
 			public void onFailure(@NonNull Call<MovieDetailResponse> call, @NonNull Throwable t) {
-
+				Timber.e(t.toString());
 			}
 		});
 	}
@@ -145,14 +140,9 @@ public class MovieDetailFragment extends Fragment {
 		}
 
 		// Error with movie id
-		Log.e(TAG, "Movie ID: " + movieId);
+		Timber.e("Movie ID: %s", movieId);
 
 		// Return nothing when incorrect movie id
 		return null;
-	}
-
-	private MovieDetailResponse fetchMovie(Response<MovieDetailResponse> response) {
-		// Parse the raw response from the API
-		return response.body();
 	}
 }

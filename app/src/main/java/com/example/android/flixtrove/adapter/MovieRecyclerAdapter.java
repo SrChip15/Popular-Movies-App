@@ -18,6 +18,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 public class MovieRecyclerAdapter
         extends RecyclerView.Adapter<MovieRecyclerAdapter.PosterViewHolder> {
@@ -130,6 +131,8 @@ public class MovieRecyclerAdapter
         @Override
         public void onClick(View view) {
             int clickedPosition = getAdapterPosition();
+            Timber.d("Clicked position %s", clickedPosition);
+
             int movieId = movieList.get(clickedPosition).getId();
             clickListener.onListItemClick(movieId);
         }

@@ -38,6 +38,8 @@ dependencies {
 
     testImplementation "junit:junit:${rootProject.ext.junit}"
 
+    implementation "com.jakewharton.timber:timber:${rootProject.ext.timber}"
+
     implementation "com.jakewharton:butterknife:${rootProject.ext.butterKnife}"
     annotationProcessor "com.jakewharton:butterknife-compiler:${rootProject.ext.butterKnife}"
 

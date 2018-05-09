@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,8 +34,7 @@ import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import static android.content.ContentValues.TAG;
+import timber.log.Timber;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -172,20 +170,20 @@ public class MoviesListFragment
 
 			@Override
 			public void onFailure(@NonNull Call<MainResponse> call, @NonNull Throwable t) {
-				Log.e(TAG, t.toString());
+				Timber.e(t.toString());
 			}
 		});
 	}
 
 	private Call<MainResponse> callMoviesApi() {
 		if (sortAction != null && sortAction.equals(INTENT_SORT_TOP_RATED_MOVIES)) {
-			Log.d(TAG, "Fetching Top Rated Movies. Current Page: " + currentPage);
+			Timber.d("Fetching Top Rated Movies. Current Page: %s", currentPage);
 			return apiConnection.getTopRatedMovies(PrivateApiKey.YOUR_API_KEY, currentPage);
 		} else if (sortAction != null && sortAction.equals(INTENT_SORT_POPULAR_MOVIES)) {
-			Log.d(TAG, "Fetching Popular Movies. Current Page: " + currentPage);
+			Timber.d("Fetching Popular Movies. Current Page: %s", currentPage);
 			return apiConnection.getPopularMovies(PrivateApiKey.YOUR_API_KEY, currentPage);
 		} else {
-			Log.d(TAG, "Fetching Discover Movies. Current Page: " + currentPage);
+			Timber.d("Fetching Discover Movies. Current Page: %s", currentPage);
 			return apiConnection.getMovies(PrivateApiKey.YOUR_API_KEY, currentPage, "US");
 		}
 	}
@@ -222,7 +220,7 @@ public class MoviesListFragment
 
 			@Override
 			public void onFailure(@NonNull Call<MainResponse> call, @NonNull Throwable t) {
-				Log.e(TAG, t.toString());
+				Timber.e(t.toString());
 			}
 		});
 	}
