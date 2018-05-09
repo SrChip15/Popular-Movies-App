@@ -1,9 +1,11 @@
 *.iml
 .gradle
-/local.properties
-/.idea/workspace.xml
-/.idea/libraries
+/*.properties
+/.idea/
 .DS_Store
 /build
 /captures
 .externalNativeBuild
+
+# Specific case
+PrivateApiKey.java
