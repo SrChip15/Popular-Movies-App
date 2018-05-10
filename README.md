@@ -24,8 +24,8 @@ Tools/Libraries
 * Android Build Tools v27
 * Android Support Library v27
 * [Butter Knife](https://github.com/JakeWharton/butterknife)
-* [Retrofit 2](https://github.com/square/retrofit)
-* [Picasso](https://github.com/square/picasso)
+* [Retrofit](https://github.com/square/retrofit)
+* [Glide](https://github.com/bumptech/glide)
 
 
 Note
