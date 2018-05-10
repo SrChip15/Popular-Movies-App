@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.android.flixtrove.R;
 import com.example.android.flixtrove.service.model.Movie;
 import com.example.android.flixtrove.ui.PosterImageView;
@@ -28,7 +30,7 @@ public class MovieRecyclerAdapter
 
     /* Class Constants */
     private static final String POSTER_IMAGE_BASE_URL = "http://image.tmdb.org/t/p/";
-    private static final String POSTER_IMAGE_SIZE = "w185";
+    private static final String POSTER_IMAGE_SIZE = "w342";
 
     public interface ListItemClickListener {
         void onListItemClick(int clickedItemMovieId);
@@ -56,31 +58,18 @@ public class MovieRecyclerAdapter
     /** Replace the contents of a view (invoked by the layout manager) */
     @Override
     public void onBindViewHolder(@NonNull PosterViewHolder holder, int position) {
-        // Get the movie at position
         Movie movieAtScrollPosition = this.movieList.get(position);
-
-        // Get the path of the current movie's poster
         String posterPath = movieAtScrollPosition.getPosterPath();
-
-        // Deal with null poster path values
-        if (posterPath == null) {
-            // Set default poster when movie poster unavailable
-            holder.displayMoviePoster.setImageResource(R.drawable.ic_movie);
-
-            // Bail early
-            return;
-        }
-
-        // If valid poster path exists for movie, append the same to the url
         String moviePosterUrl = POSTER_IMAGE_BASE_URL + POSTER_IMAGE_SIZE + posterPath;
 
-        // Construct movie poster final url
-        /*Picasso.get()
+        RequestOptions options = new RequestOptions()
+                .placeholder(R.drawable.ic_movie) // This checks for null paths & if null loads placeholder image
+                .error(R.drawable.ic_movie);
+
+        Glide.with(context)
+                .setDefaultRequestOptions(options)
                 .load(moviePosterUrl)
-                .fit()
-                .centerCrop()
-                .error(android.R.drawable.sym_def_app_icon)
-                .into(holder.displayMoviePoster);*/
+                .into(holder.displayMoviePoster);
     }
 
     /** Return the size of your data set (invoked by the layout manager) */

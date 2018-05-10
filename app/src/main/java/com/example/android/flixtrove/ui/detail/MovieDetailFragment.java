@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.android.flixtrove.PrivateApiKey;
 import com.example.android.flixtrove.R;
 import com.example.android.flixtrove.service.model.MovieDetailResponse;
@@ -37,7 +38,7 @@ public class MovieDetailFragment extends Fragment {
 	/* Class Constants */
 	public static final String INTENT_MOVIE_ID = "movie_id";
 	private static final String POSTER_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/";
-	private static final String POSTER_IMAGE_SIZE = "w500";
+	private static final String POSTER_IMAGE_SIZE = "w780";
 
 	/* Class variables */
 	@BindView(R.id.detail_movie_poster_iv)
@@ -97,13 +98,14 @@ public class MovieDetailFragment extends Fragment {
 				// Get the movie
 				MovieDetailResponse movie = response.body();
 
-				Timber.d("Getting image from: %s", POSTER_IMAGE_BASE_URL +
-						POSTER_IMAGE_SIZE + movie.getBackdropPath());
+				String completeBackdropPath = POSTER_IMAGE_BASE_URL +
+						POSTER_IMAGE_SIZE + movie.getBackdropPath();
+				Timber.d("Getting image from: %s", completeBackdropPath);
 
 				// Set movie poster
-				/*Picasso.get()
-						.load(POSTER_IMAGE_BASE_URL + POSTER_IMAGE_SIZE + movie.getBackdropPath())
-						.into(moviePosterImageView);*/
+				Glide.with(getActivity())
+						.load(completeBackdropPath)
+						.into(moviePosterImageView);
 
 				// Set vote average ratings
 				BigDecimal getVoteAverage =  new BigDecimal(movie.getVoteAverage());

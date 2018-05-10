@@ -71,7 +71,6 @@ public class MoviesListFragment
 		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(true);
 		setRetainInstance(true);
-
 	}
 
 	@Override
@@ -84,13 +83,11 @@ public class MoviesListFragment
 		ButterKnife.bind(this, rootView);
 
 		// Configure recycler view
-		recyclerView.setHasFixedSize(true);
-		// Prepare the layout manager and hand it over to the view
 		prepareLayout();
-		recyclerView.setLayoutManager(layoutManager);
-		// Initialize adapter for recycler view
+		recyclerView.setHasFixedSize(true);
 		adapter = new MovieRecyclerAdapter(getContext(), this);
 		recyclerView.setAdapter(adapter);
+		recyclerView.setLayoutManager(layoutManager);
 
 		// Add scroll listener and enable pagination
 		recyclerView.addOnScrollListener(new PaginationScrollListener(layoutManager) {
