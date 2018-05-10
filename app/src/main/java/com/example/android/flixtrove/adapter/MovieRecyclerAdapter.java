@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import com.example.android.flixtrove.R;
 import com.example.android.flixtrove.service.model.Movie;
 import com.example.android.flixtrove.ui.PosterImageView;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,12 +75,12 @@ public class MovieRecyclerAdapter
         String moviePosterUrl = POSTER_IMAGE_BASE_URL + POSTER_IMAGE_SIZE + posterPath;
 
         // Construct movie poster final url
-        Picasso.get()
+        /*Picasso.get()
                 .load(moviePosterUrl)
                 .fit()
                 .centerCrop()
                 .error(android.R.drawable.sym_def_app_icon)
-                .into(holder.displayMoviePoster);
+                .into(holder.displayMoviePoster);*/
     }
 
     /** Return the size of your data set (invoked by the layout manager) */

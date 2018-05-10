@@ -19,7 +19,6 @@ import com.example.android.flixtrove.R;
 import com.example.android.flixtrove.service.model.MovieDetailResponse;
 import com.example.android.flixtrove.service.repository.MovieRepository;
 import com.example.android.flixtrove.service.repository.MovieService;
-import com.squareup.picasso.Picasso;
 
 import java.math.BigDecimal;
 
@@ -102,9 +101,9 @@ public class MovieDetailFragment extends Fragment {
 						POSTER_IMAGE_SIZE + movie.getBackdropPath());
 
 				// Set movie poster
-				Picasso.get()
+				/*Picasso.get()
 						.load(POSTER_IMAGE_BASE_URL + POSTER_IMAGE_SIZE + movie.getBackdropPath())
-						.into(moviePosterImageView);
+						.into(moviePosterImageView);*/
 
 				// Set vote average ratings
 				BigDecimal getVoteAverage =  new BigDecimal(movie.getVoteAverage());
