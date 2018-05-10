@@ -22,21 +22,14 @@ import timber.log.Timber;
 
 public class MovieRecyclerAdapter
         extends RecyclerView.Adapter<MovieRecyclerAdapter.PosterViewHolder> {
-
-    /** List of movieList */
+    /* Class variables */
     private List<Movie> movieList;
-
-    /** Application context */
     private final Context context;
-
-    /** ItemClickListener */
     private final ListItemClickListener clickListener;
 
-    /** Base URL for movie poster */
+    /* Class Constants */
     private static final String POSTER_IMAGE_BASE_URL = "http://image.tmdb.org/t/p/";
-
-    /** Movie poster size */
-    private static final String POSTER_IMAGE_SIZE = "w780";
+    private static final String POSTER_IMAGE_SIZE = "w185";
 
     public interface ListItemClickListener {
         void onListItemClick(int clickedItemMovieId);
@@ -85,7 +78,8 @@ public class MovieRecyclerAdapter
         // Construct movie poster final url
         Picasso.get()
                 .load(moviePosterUrl)
-                .placeholder(android.R.drawable.sym_def_app_icon)
+                .fit()
+                .centerCrop()
                 .error(android.R.drawable.sym_def_app_icon)
                 .into(holder.displayMoviePoster);
     }
@@ -134,6 +128,7 @@ public class MovieRecyclerAdapter
             Timber.d("Clicked position %s", clickedPosition);
 
             int movieId = movieList.get(clickedPosition).getId();
+            Timber.i("Movie ID: %d", movieId);
             clickListener.onListItemClick(movieId);
         }
     }

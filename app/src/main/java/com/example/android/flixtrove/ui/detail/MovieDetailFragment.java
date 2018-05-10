@@ -38,7 +38,7 @@ public class MovieDetailFragment extends Fragment {
 	/* Class Constants */
 	public static final String INTENT_MOVIE_ID = "movie_id";
 	private static final String POSTER_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/";
-	private static final String POSTER_IMAGE_SIZE = "w780";
+	private static final String POSTER_IMAGE_SIZE = "w500";
 
 	/* Class variables */
 	@BindView(R.id.detail_movie_poster_iv)
@@ -94,6 +94,7 @@ public class MovieDetailFragment extends Fragment {
 			@Override
 			public void onResponse(@NonNull Call<MovieDetailResponse> call,
 			                       @NonNull Response<MovieDetailResponse> response) {
+				Timber.i("Getting movie details from: %s", call.request().url().toString());
 				// Get the movie
 				MovieDetailResponse movie = response.body();
 

@@ -42,44 +42,25 @@ import timber.log.Timber;
 public class MoviesListFragment
 		extends Fragment
 		implements ListItemClickListener, OnGlobalLayoutListener {
-	/** Layout manager for recycler view */
-	private GridLayoutManager layoutManager;
 
-	/** Recycler view to display grid of movie posters */
+	/* Class variables */
+	private GridLayoutManager layoutManager;
 	@BindView(R.id.recycler_view)
 	RecyclerView recyclerView;
-
-	/** Movie poster buffer indicator */
 	@BindView(R.id.main_progress_bar)
 	ProgressBar progressBar;
-
-	/** Adapter for the view */
 	private MovieRecyclerAdapter adapter;
-
-	/** Movie API service */
 	private MovieService apiConnection;
-
-	/** Tag for popular movies sort option */
-	public static final String INTENT_SORT_POPULAR_MOVIES = "PopularMovies";
-
-	/** Tag for top rated movies sort option */
-	public static final String INTENT_SORT_TOP_RATED_MOVIES = "TopRatedMovies";
-
-	/** String to store sort option tag */
 	private String sortAction;
-
-	/** Flag for paginated scroll listener */
 	private boolean isLoading = false;
 	private boolean isLastPage = false;
-
-	/** Total number of movie pages from the API */
 	private int totalPages;
-
-	/** Default constant value for current page */
-	private static final int PAGE_START = 1;
-
-	/** Store current movie page that is being parsed */
 	private int currentPage = PAGE_START;
+
+	/* Class Constants */
+	public static final String INTENT_SORT_POPULAR_MOVIES = "PopularMovies";
+	public static final String INTENT_SORT_TOP_RATED_MOVIES = "TopRatedMovies";
+	private static final int PAGE_START = 1;
 
 	public MoviesListFragment() {
 		// Required empty public constructor
@@ -156,6 +137,7 @@ public class MoviesListFragment
 					@NonNull Call<MainResponse> call,
 					@NonNull Response<MainResponse> response
 			) {
+				Timber.d("loadFirstPage() - pinging %s", call.request().url().toString());
 				List<Movie> movies = fetchMovies(response);
 				adapter.addAll(movies);
 
@@ -195,6 +177,7 @@ public class MoviesListFragment
 		// Get total number of pages from this call
 		assert rawResponse != null;
 		totalPages = rawResponse.getTotalPages();
+		Timber.d("Total number of pages: %s", totalPages);
 
 		// Return the list of movies
 		return rawResponse.getMovies();
@@ -208,6 +191,7 @@ public class MoviesListFragment
 					@NonNull Call<MainResponse> call,
 					@NonNull Response<MainResponse> response
 			) {
+				Timber.d("loadNextPage() - pinging %s", call.request().url().toString());
 				isLoading = false;
 
 				List<Movie> movies = fetchMovies(response);
