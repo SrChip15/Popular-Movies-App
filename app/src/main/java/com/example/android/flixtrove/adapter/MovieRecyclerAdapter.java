@@ -23,6 +23,32 @@ import timber.log.Timber;
 
 public class MovieRecyclerAdapter
         extends RecyclerView.Adapter<MovieRecyclerAdapter.PosterViewHolder> {
+    /** Provide a reference to the views for each data item via a view holder */
+    class PosterViewHolder
+            extends RecyclerView.ViewHolder
+            implements OnClickListener {
+        /** Each data item is a movie represented as a movie poster image */
+        @BindView(R.id.grid_movie_poster_iv)
+        PosterImageView displayMoviePoster;
+
+        /** Initialize view and cache reference hooks */
+        PosterViewHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            int clickedPosition = getAdapterPosition();
+            Timber.d("Clicked position %s", clickedPosition);
+
+            int movieId = movieList.get(clickedPosition).getId();
+            Timber.i("Movie ID: %d", movieId);
+            clickListener.onListItemClick(clickedPosition, movieId);
+        }
+    }
+
     /* Class variables */
     private List<Movie> movieList;
     private final Context context;
@@ -33,7 +59,7 @@ public class MovieRecyclerAdapter
     private static final String POSTER_IMAGE_SIZE = "w342";
 
     public interface ListItemClickListener {
-        void onListItemClick(int clickedItemMovieId);
+        void onListItemClick(int position, int clickedItemMovieId); // may use position to smooth scroll upon up navigation
     }
 
     /** Create new Movie RecyclerView adapter */
@@ -92,32 +118,6 @@ public class MovieRecyclerAdapter
             movieList.addAll(movies);
 
             notifyDataSetChanged();
-        }
-    }
-
-    /** Provide a reference to the views for each data item via a view holder */
-    class PosterViewHolder
-            extends RecyclerView.ViewHolder
-            implements OnClickListener {
-        /** Each data item is a movie represented as a movie poster image */
-        @BindView(R.id.grid_movie_poster_iv)
-        PosterImageView displayMoviePoster;
-
-        /** Initialize view and cache reference hooks */
-        PosterViewHolder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
-            itemView.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View view) {
-            int clickedPosition = getAdapterPosition();
-            Timber.d("Clicked position %s", clickedPosition);
-
-            int movieId = movieList.get(clickedPosition).getId();
-            Timber.i("Movie ID: %d", movieId);
-            clickListener.onListItemClick(movieId);
         }
     }
 }

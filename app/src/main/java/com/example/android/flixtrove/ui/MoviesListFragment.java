@@ -248,13 +248,9 @@ public class MoviesListFragment
 	}
 
 	@Override
-	public void onListItemClick(int clickedItemMovieId) {
-		// Build intent to fire detailed pane
+	public void onListItemClick(int clickedPosition, int clickedItemMovieId) {
 		Intent detailViewRequestIntent = new Intent(getContext(), MovieDetailActivity.class);
-
-		// Pass in the movie ID that was clicked to get the relevant movie details
 		detailViewRequestIntent.putExtra(MovieDetailFragment.INTENT_MOVIE_ID, clickedItemMovieId);
-
 		startActivity(detailViewRequestIntent);
 	}
 
