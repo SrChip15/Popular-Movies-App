@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ImageView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/grid_movie_poster_iv"
+    android:layout_width="@dimen/poster_width"
+    android:layout_height="@dimen/poster_height"
+    android:layout_marginBottom="2dp"
+    android:layout_marginEnd="2dp"
+    android:contentDescription="@string/poster_content_desc" />
+
+
+
+
+
+

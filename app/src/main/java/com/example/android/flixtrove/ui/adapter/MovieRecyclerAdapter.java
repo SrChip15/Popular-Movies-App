@@ -1,4 +1,4 @@
-package com.example.android.flixtrove.adapter;
+package com.example.android.flixtrove.ui.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -7,12 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.android.flixtrove.R;
 import com.example.android.flixtrove.service.model.Movie;
-import com.example.android.flixtrove.ui.PosterImageView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,7 @@ public class MovieRecyclerAdapter
             implements OnClickListener {
         /** Each data item is a movie represented as a movie poster image */
         @BindView(R.id.grid_movie_poster_iv)
-        PosterImageView displayMoviePoster;
+        ImageView displayMoviePoster;
 
         /** Initialize view and cache reference hooks */
         PosterViewHolder(View itemView) {
@@ -75,7 +75,7 @@ public class MovieRecyclerAdapter
     public PosterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // Create and inflate view for each data item in the list
         LayoutInflater inflater = LayoutInflater.from(context);
-        View itemView = inflater.inflate(R.layout.list_item, parent, false);
+        View itemView = inflater.inflate(R.layout.list_item_movie_poster, parent, false);
 
         // Return the inflated item view
         return new PosterViewHolder(itemView);
@@ -87,10 +87,12 @@ public class MovieRecyclerAdapter
         Movie movieAtScrollPosition = this.movieList.get(position);
         String posterPath = movieAtScrollPosition.getPosterPath();
         String moviePosterUrl = POSTER_IMAGE_BASE_URL + POSTER_IMAGE_SIZE + posterPath;
+        Timber.i("Movie poster path: %s", moviePosterUrl);
 
         RequestOptions options = new RequestOptions()
                 .placeholder(R.drawable.ic_movie) // This checks for null paths & if null loads placeholder image
-                .error(R.drawable.ic_movie);
+                .error(R.drawable.ic_movie)
+                .centerCrop();
 
         Glide.with(context)
                 .setDefaultRequestOptions(options)

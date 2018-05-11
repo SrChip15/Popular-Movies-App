@@ -1,4 +1,4 @@
-package com.example.android.flixtrove.service.repository;
+package com.example.android.flixtrove.service.network;
 
 import com.example.android.flixtrove.service.model.MainResponse;
 import com.example.android.flixtrove.service.model.MovieDetailResponse;

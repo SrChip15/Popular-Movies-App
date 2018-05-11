@@ -1,4 +1,4 @@
-package com.example.android.flixtrove.adapter;
+package com.example.android.flixtrove.ui.adapter;
 
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;

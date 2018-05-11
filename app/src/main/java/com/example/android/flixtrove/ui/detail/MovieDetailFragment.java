@@ -18,8 +18,8 @@ import com.bumptech.glide.Glide;
 import com.example.android.flixtrove.PrivateApiKey;
 import com.example.android.flixtrove.R;
 import com.example.android.flixtrove.service.model.MovieDetailResponse;
-import com.example.android.flixtrove.service.repository.MovieRepository;
-import com.example.android.flixtrove.service.repository.MovieService;
+import com.example.android.flixtrove.service.network.MovieRepository;
+import com.example.android.flixtrove.service.network.MovieService;
 
 import java.math.BigDecimal;
 
@@ -68,7 +68,7 @@ public class MovieDetailFragment extends Fragment {
 	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
 		// Inflate detailed pane fragment layout
-		View rootView = inflater.inflate(R.layout.fragment_detail_view, container, false);
+		View rootView = inflater.inflate(R.layout.fragment_movie_detail, container, false);
 
 		// Get reference to relevant views
 		ButterKnife.bind(this, rootView);

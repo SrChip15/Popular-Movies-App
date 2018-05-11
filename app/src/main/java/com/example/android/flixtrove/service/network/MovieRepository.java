@@ -1,4 +1,4 @@
-package com.example.android.flixtrove.service.repository;
+package com.example.android.flixtrove.service.network;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

@@ -17,13 +17,13 @@ import android.widget.ProgressBar;
 
 import com.example.android.flixtrove.PrivateApiKey;
 import com.example.android.flixtrove.R;
-import com.example.android.flixtrove.adapter.MovieRecyclerAdapter;
-import com.example.android.flixtrove.adapter.MovieRecyclerAdapter.ListItemClickListener;
-import com.example.android.flixtrove.adapter.PaginationScrollListener;
 import com.example.android.flixtrove.service.model.MainResponse;
 import com.example.android.flixtrove.service.model.Movie;
-import com.example.android.flixtrove.service.repository.MovieRepository;
-import com.example.android.flixtrove.service.repository.MovieService;
+import com.example.android.flixtrove.service.network.MovieRepository;
+import com.example.android.flixtrove.service.network.MovieService;
+import com.example.android.flixtrove.ui.adapter.MovieRecyclerAdapter;
+import com.example.android.flixtrove.ui.adapter.MovieRecyclerAdapter.ListItemClickListener;
+import com.example.android.flixtrove.ui.adapter.PaginationScrollListener;
 import com.example.android.flixtrove.ui.detail.MovieDetailActivity;
 import com.example.android.flixtrove.ui.detail.MovieDetailFragment;
 
@@ -77,7 +77,7 @@ public class MoviesListFragment
 	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
 		// Inflate grid view fragment layout
-		View rootView = inflater.inflate(R.layout.fragment_grid_view, container, false);
+		View rootView = inflater.inflate(R.layout.fragment_movie_list, container, false);
 
 		// Get all references to relevant views
 		ButterKnife.bind(this, rootView);

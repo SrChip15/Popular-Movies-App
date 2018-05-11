@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Width of the movie poster -->
+    <!-- Width of the movie poster (342 * 513) -->
     <dimen name="poster_width">200dp</dimen>
+
+    <!-- Height of the movie poster (342 * 513) -->
+    <dimen name="poster_height">257dp</dimen>
 
     <!-- Margin for the individual movie posters in the grid view (Master View) -->
     <dimen name="grid_poster_margin">1dp</dimen>
