@@ -6,6 +6,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class Movie {
 
     @SerializedName("vote_count")
@@ -49,20 +50,32 @@ public class Movie {
     @Expose
     private String releaseDate;
 
-    public Integer getVoteCount() {
-        return voteCount;
-    }
-
-    public void setVoteCount(Integer voteCount) {
-        this.voteCount = voteCount;
-    }
-
     public Integer getId() {
         return id;
     }
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getPosterPath() {
+        return posterPath;
+    }
+
+    public Integer getVoteCount() {
+        return voteCount;
+    }
+
+    public void setVoteCount(Integer voteCount) {
+        this.voteCount = voteCount;
     }
 
     public Boolean getVideo() {
@@ -81,24 +94,12 @@ public class Movie {
         this.voteAverage = voteAverage;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public Double getPopularity() {
         return popularity;
     }
 
     public void setPopularity(Double popularity) {
         this.popularity = popularity;
-    }
-
-    public String getPosterPath() {
-        return posterPath;
     }
 
     public void setPosterPath(String posterPath) {
@@ -160,5 +161,4 @@ public class Movie {
     public void setReleaseDate(String releaseDate) {
         this.releaseDate = releaseDate;
     }
-
 }
