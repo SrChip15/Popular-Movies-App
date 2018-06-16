@@ -27,6 +27,7 @@ import com.example.android.flixtrove.ui.adapter.PaginationScrollListener;
 import com.example.android.flixtrove.ui.detail.MovieDetailActivity;
 import com.example.android.flixtrove.ui.detail.MovieDetailFragment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -52,15 +53,17 @@ public class MoviesListFragment
     private MovieRecyclerAdapter adapter;
     private MovieService apiConnection;
     private String sortAction;
-    private boolean isLoading = false;
-    private boolean isLastPage = false;
     private int totalPages;
-    private int currentPage = PAGE_START;
+    private int currentPage = FIRST_PAGE;
+    @SuppressWarnings("FieldCanBeLocal")
+    private PaginationScrollListener scrollListener;
+    private List<Movie> movies = new ArrayList<>();
 
     /* Class Constants */
     public static final String INTENT_SORT_POPULAR_MOVIES = "PopularMovies";
     public static final String INTENT_SORT_TOP_RATED_MOVIES = "TopRatedMovies";
-    private static final int PAGE_START = 1;
+    private static final String KEY_RETAINED_STATE = "RetainedState";
+    private static final int FIRST_PAGE = 1;
 
     public MoviesListFragment() {
         // Required empty public constructor
@@ -83,17 +86,31 @@ public class MoviesListFragment
 
         // Connect to API and fetch results
         apiConnection = MovieRepository.getClient().create(MovieService.class);
-        loadFirstPage();
+
+        if (savedInstanceState == null) {
+            loadMovies();
+        } else {
+            //TODO - Figure out a way to remember scrolled place in list; currently, when the list
+            // gets bigger or on multiple orientation changes, the adapter starts at beginning position
+            adapter.addAll(movies);
+            progressBar.setVisibility(View.GONE);
+        }
 
         return rootView;
     }
 
-    private void loadFirstPage() {
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        movies = adapter.getData();
+        outState.putBoolean(KEY_RETAINED_STATE, true);
+    }
+
+    private void loadMovies() {
         // Clear existing data
         adapter.clear();
 
-        // Make network call
-        callMoviesApi().enqueue(new Callback<MainResponse>() {
+        callMoviesApi(FIRST_PAGE).enqueue(new Callback<MainResponse>() {
             @Override
             public void onResponse(
                     @NonNull Call<MainResponse> call,
@@ -105,11 +122,6 @@ public class MoviesListFragment
 
                 // Hide progress bar
                 progressBar.setVisibility(View.GONE);
-
-                // Check if current page is last page
-                if (currentPage == totalPages) {
-                    isLastPage = true;
-                }
             }
 
             @Override
@@ -119,7 +131,8 @@ public class MoviesListFragment
         });
     }
 
-    private Call<MainResponse> callMoviesApi() {
+    private Call<MainResponse> callMoviesApi(int page) {
+        //TODO - Fix page info arg for sort options
         if (sortAction != null && sortAction.equals(INTENT_SORT_TOP_RATED_MOVIES)) {
             Timber.d("Fetching Top Rated Movies. Current Page: %s", currentPage);
             return apiConnection.getTopRatedMovies(PrivateApiKey.YOUR_API_KEY, currentPage);
@@ -127,47 +140,41 @@ public class MoviesListFragment
             Timber.d("Fetching Popular Movies. Current Page: %s", currentPage);
             return apiConnection.getPopularMovies(PrivateApiKey.YOUR_API_KEY, currentPage);
         } else {
-            Timber.d("Fetching Discover Movies. Current Page: %s", currentPage);
-            return apiConnection.getMovies(PrivateApiKey.YOUR_API_KEY, currentPage, "US");
+            Timber.d("Fetching Discover Movies. Current Page: %s", page);
+            return apiConnection.getMovies(PrivateApiKey.YOUR_API_KEY, page, "US");
         }
     }
 
     private List<Movie> fetchMovies(Response<MainResponse> response) {
-        // Parse the raw response from the API
         MainResponse rawResponse = response.body();
-
-        // Get total number of pages from this call
         assert rawResponse != null;
         totalPages = rawResponse.getTotalPages();
         Timber.d("Total number of pages: %s", totalPages);
 
-        // Return the list of movies
         return rawResponse.getMovies();
     }
 
-    private void loadNextPage() {
-        callMoviesApi().enqueue(new Callback<MainResponse>() {
-            @Override
-            public void onResponse(
-                    @NonNull Call<MainResponse> call,
-                    @NonNull Response<MainResponse> response
-            ) {
-                Timber.d("(Next Page) Fetch data from: %s", call.request().url().toString());
-                isLoading = false;
+    private void loadNextPage(int page) {
+        if (page <= totalPages) {
+            callMoviesApi(page).enqueue(new Callback<MainResponse>() {
+                @Override
+                public void onResponse(
+                        @NonNull Call<MainResponse> call,
+                        @NonNull Response<MainResponse> response
+                ) {
+                    Timber.d("(Next Page) Fetch data from: %s", call.request().url().toString());
+                    //isLoading = false;
 
-                List<Movie> movies = fetchMovies(response);
-                adapter.addAll(movies);
-
-                if (currentPage == totalPages) {
-                    isLastPage = true;
+                    List<Movie> movies = fetchMovies(response);
+                    adapter.addAll(movies);
                 }
-            }
 
-            @Override
-            public void onFailure(@NonNull Call<MainResponse> call, @NonNull Throwable t) {
-                Timber.e(t.toString());
-            }
-        });
+                @Override
+                public void onFailure(@NonNull Call<MainResponse> call, @NonNull Throwable t) {
+                    Timber.e(t.toString());
+                }
+            });
+        }
     }
 
     @Override
@@ -176,9 +183,9 @@ public class MoviesListFragment
             case R.id.action_top_rated:
                 sortAction = INTENT_SORT_TOP_RATED_MOVIES;
                 // Reset current page
-                currentPage = PAGE_START;
+                currentPage = FIRST_PAGE;
                 // Load first page of top rated movies
-                loadFirstPage();
+                loadMovies();
                 // Click handled successfully
                 return true;
 
@@ -186,21 +193,22 @@ public class MoviesListFragment
                 // User clicked sort by popular movies menu item
                 sortAction = INTENT_SORT_POPULAR_MOVIES;
                 // Reset current page
-                currentPage = PAGE_START;
+                currentPage = FIRST_PAGE;
                 // Load first page of popular movies
-                loadFirstPage();
+                loadMovies();
                 // Click handled successfully
                 return true;
         }
 
-        // Default behaviour
         return super.onOptionsItemSelected(item);
     }
 
     private void prepareLayout() {
         recyclerView.setHasFixedSize(true);
+
         adapter = new MovieRecyclerAdapter(getContext(), this);
         recyclerView.setAdapter(adapter);
+
         // Configure layout manager
         layoutManager = new GridLayoutManager(
                 getContext(),
@@ -213,32 +221,13 @@ public class MoviesListFragment
         recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(this);
 
         recyclerView.setLayoutManager(layoutManager);
-
-        // Enable pagination
-        recyclerView.addOnScrollListener(new PaginationScrollListener(layoutManager) {
+        scrollListener = new PaginationScrollListener(layoutManager) {
             @Override
-            protected void loadMoreItems() {
-                isLoading = true;
-                currentPage++;
-
-                loadNextPage();
+            protected void loadMoreItems(int page) {
+                loadNextPage(page);
             }
-
-            @Override
-            public int getTotalPageCount() {
-                return totalPages;
-            }
-
-            @Override
-            public boolean isLastPage() {
-                return isLastPage;
-            }
-
-            @Override
-            public boolean isLoading() {
-                return isLoading;
-            }
-        });
+        };
+        recyclerView.addOnScrollListener(scrollListener);
     }
 
     @Override
