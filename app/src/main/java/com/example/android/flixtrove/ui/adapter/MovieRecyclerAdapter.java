@@ -87,7 +87,6 @@ public class MovieRecyclerAdapter
         Movie movieAtScrollPosition = this.movieList.get(position);
         String posterPath = movieAtScrollPosition.getPosterPath();
         String moviePosterUrl = POSTER_IMAGE_BASE_URL + POSTER_IMAGE_SIZE + posterPath;
-        Timber.i("Movie poster path: %s", moviePosterUrl);
 
         RequestOptions options = new RequestOptions()
                 .placeholder(R.drawable.ic_movie) // This checks for null paths & if null loads placeholder image
@@ -103,7 +102,7 @@ public class MovieRecyclerAdapter
     /** Return the size of your data set (invoked by the layout manager) */
     @Override
     public int getItemCount() {
-        return this.movieList.size();
+        return movieList == null ? 0 : movieList.size();
     }
 
     /** Helper method to clear adapter's old data */
@@ -114,12 +113,16 @@ public class MovieRecyclerAdapter
     }
 
     /** Helper method to add all movieList from a list into the adapter's data set */
-    public void addAll(List<Movie> movies) {
-        if (movies != null && !movies.isEmpty()) {
-            // Add all movies
+    public void addAll(@NonNull List<Movie> movies) {
+        if (!movies.isEmpty()) {
+            int startPosition = movieList.size();
             movieList.addAll(movies);
-
-            notifyDataSetChanged();
+            notifyItemRangeInserted(startPosition, movieList.size());
         }
+    }
+
+    @NonNull
+    public List<Movie> getData() {
+        return movieList;
     }
 }
