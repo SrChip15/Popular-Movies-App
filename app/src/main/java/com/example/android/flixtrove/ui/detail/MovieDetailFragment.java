@@ -82,11 +82,14 @@ public class MovieDetailFragment extends Fragment {
 		// Connect to the api
 		apiConnection = MovieRepository.getClient().create(MovieService.class);
 
-		// Load view
-		loadMovieDetails();
-
 		// Return view
 		return rootView;
+	}
+
+	@Override
+	public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		loadMovieDetails(); // safeguard against NPE for getActivity() (pre-attached state)
 	}
 
 	private void loadMovieDetails() {
