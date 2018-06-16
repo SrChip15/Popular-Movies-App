@@ -40,236 +40,230 @@ import timber.log.Timber;
  * A simple {@link Fragment} subclass.
  */
 public class MoviesListFragment
-		extends Fragment
-		implements ListItemClickListener, OnGlobalLayoutListener {
+        extends Fragment
+        implements ListItemClickListener, OnGlobalLayoutListener {
 
-	/* Class variables */
-	private GridLayoutManager layoutManager;
-	@BindView(R.id.recycler_view)
-	RecyclerView recyclerView;
-	@BindView(R.id.main_progress_bar)
-	ProgressBar progressBar;
-	private MovieRecyclerAdapter adapter;
-	private MovieService apiConnection;
-	private String sortAction;
-	private boolean isLoading = false;
-	private boolean isLastPage = false;
-	private int totalPages;
-	private int currentPage = PAGE_START;
+    /* Class variables */
+    private GridLayoutManager layoutManager;
+    @BindView(R.id.recycler_view)
+    RecyclerView recyclerView;
+    @BindView(R.id.main_progress_bar)
+    ProgressBar progressBar;
+    private MovieRecyclerAdapter adapter;
+    private MovieService apiConnection;
+    private String sortAction;
+    private boolean isLoading = false;
+    private boolean isLastPage = false;
+    private int totalPages;
+    private int currentPage = PAGE_START;
 
-	/* Class Constants */
-	public static final String INTENT_SORT_POPULAR_MOVIES = "PopularMovies";
-	public static final String INTENT_SORT_TOP_RATED_MOVIES = "TopRatedMovies";
-	private static final int PAGE_START = 1;
+    /* Class Constants */
+    public static final String INTENT_SORT_POPULAR_MOVIES = "PopularMovies";
+    public static final String INTENT_SORT_TOP_RATED_MOVIES = "TopRatedMovies";
+    private static final int PAGE_START = 1;
 
-	public MoviesListFragment() {
-		// Required empty public constructor
-	}
+    public MoviesListFragment() {
+        // Required empty public constructor
+    }
 
-	@Override
-	public void onCreate(@Nullable Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setHasOptionsMenu(true);
-		setRetainInstance(true);
-	}
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+        setRetainInstance(true);
+    }
 
-	@Override
-	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-							 Bundle savedInstanceState) {
-		// Inflate grid view fragment layout
-		View rootView = inflater.inflate(R.layout.fragment_movie_list, container, false);
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_movie_list, container, false);
+        ButterKnife.bind(this, rootView);
 
-		// Get all references to relevant views
-		ButterKnife.bind(this, rootView);
+        prepareLayout();
 
-		// Configure recycler view
-		prepareLayout();
-		recyclerView.setHasFixedSize(true);
-		adapter = new MovieRecyclerAdapter(getContext(), this);
-		recyclerView.setAdapter(adapter);
-		recyclerView.setLayoutManager(layoutManager);
+        // Connect to API and fetch results
+        apiConnection = MovieRepository.getClient().create(MovieService.class);
+        loadFirstPage();
 
-		// Add scroll listener and enable pagination
-		recyclerView.addOnScrollListener(new PaginationScrollListener(layoutManager) {
-			@Override
-			protected void loadMoreItems() {
-				isLoading = true;
-				currentPage++;
+        return rootView;
+    }
 
-				loadNextPage();
-			}
+    private void loadFirstPage() {
+        // Clear existing data
+        adapter.clear();
 
-			@Override
-			public int getTotalPageCount() {
-				return totalPages;
-			}
+        // Make network call
+        callMoviesApi().enqueue(new Callback<MainResponse>() {
+            @Override
+            public void onResponse(
+                    @NonNull Call<MainResponse> call,
+                    @NonNull Response<MainResponse> response
+            ) {
+                Timber.d("Fetch data from: %s", call.request().url().toString());
+                List<Movie> movies = fetchMovies(response);
+                adapter.addAll(movies);
 
-			@Override
-			public boolean isLastPage() {
-				return isLastPage;
-			}
+                // Hide progress bar
+                progressBar.setVisibility(View.GONE);
 
-			@Override
-			public boolean isLoading() {
-				return isLoading;
-			}
-		});
+                // Check if current page is last page
+                if (currentPage == totalPages) {
+                    isLastPage = true;
+                }
+            }
 
-		// Connect to API and fetch results
-		apiConnection = MovieRepository.getClient().create(MovieService.class);
-		loadFirstPage();
+            @Override
+            public void onFailure(@NonNull Call<MainResponse> call, @NonNull Throwable t) {
+                Timber.e(t.toString());
+            }
+        });
+    }
 
-		// Return root view
-		return rootView;
-	}
+    private Call<MainResponse> callMoviesApi() {
+        if (sortAction != null && sortAction.equals(INTENT_SORT_TOP_RATED_MOVIES)) {
+            Timber.d("Fetching Top Rated Movies. Current Page: %s", currentPage);
+            return apiConnection.getTopRatedMovies(PrivateApiKey.YOUR_API_KEY, currentPage);
+        } else if (sortAction != null && sortAction.equals(INTENT_SORT_POPULAR_MOVIES)) {
+            Timber.d("Fetching Popular Movies. Current Page: %s", currentPage);
+            return apiConnection.getPopularMovies(PrivateApiKey.YOUR_API_KEY, currentPage);
+        } else {
+            Timber.d("Fetching Discover Movies. Current Page: %s", currentPage);
+            return apiConnection.getMovies(PrivateApiKey.YOUR_API_KEY, currentPage, "US");
+        }
+    }
 
-	private void loadFirstPage() {
-		// Clear existing data
-		adapter.clear();
+    private List<Movie> fetchMovies(Response<MainResponse> response) {
+        // Parse the raw response from the API
+        MainResponse rawResponse = response.body();
 
-		// Make network call
-		callMoviesApi().enqueue(new Callback<MainResponse>() {
-			@Override
-			public void onResponse(
-					@NonNull Call<MainResponse> call,
-					@NonNull Response<MainResponse> response
-			) {
-				Timber.d("loadFirstPage() - pinging %s", call.request().url().toString());
-				List<Movie> movies = fetchMovies(response);
-				adapter.addAll(movies);
+        // Get total number of pages from this call
+        assert rawResponse != null;
+        totalPages = rawResponse.getTotalPages();
+        Timber.d("Total number of pages: %s", totalPages);
 
-				// Hide progress bar
-				progressBar.setVisibility(View.GONE);
+        // Return the list of movies
+        return rawResponse.getMovies();
+    }
 
-				// Check if current page is last page
-				if (currentPage == totalPages) {
-					isLastPage = true;
-				}
-			}
+    private void loadNextPage() {
+        callMoviesApi().enqueue(new Callback<MainResponse>() {
+            @Override
+            public void onResponse(
+                    @NonNull Call<MainResponse> call,
+                    @NonNull Response<MainResponse> response
+            ) {
+                Timber.d("(Next Page) Fetch data from: %s", call.request().url().toString());
+                isLoading = false;
 
-			@Override
-			public void onFailure(@NonNull Call<MainResponse> call, @NonNull Throwable t) {
-				Timber.e(t.toString());
-			}
-		});
-	}
+                List<Movie> movies = fetchMovies(response);
+                adapter.addAll(movies);
 
-	private Call<MainResponse> callMoviesApi() {
-		if (sortAction != null && sortAction.equals(INTENT_SORT_TOP_RATED_MOVIES)) {
-			Timber.d("Fetching Top Rated Movies. Current Page: %s", currentPage);
-			return apiConnection.getTopRatedMovies(PrivateApiKey.YOUR_API_KEY, currentPage);
-		} else if (sortAction != null && sortAction.equals(INTENT_SORT_POPULAR_MOVIES)) {
-			Timber.d("Fetching Popular Movies. Current Page: %s", currentPage);
-			return apiConnection.getPopularMovies(PrivateApiKey.YOUR_API_KEY, currentPage);
-		} else {
-			Timber.d("Fetching Discover Movies. Current Page: %s", currentPage);
-			return apiConnection.getMovies(PrivateApiKey.YOUR_API_KEY, currentPage, "US");
-		}
-	}
+                if (currentPage == totalPages) {
+                    isLastPage = true;
+                }
+            }
 
-	private List<Movie> fetchMovies(Response<MainResponse> response) {
-		// Parse the raw response from the API
-		MainResponse rawResponse = response.body();
+            @Override
+            public void onFailure(@NonNull Call<MainResponse> call, @NonNull Throwable t) {
+                Timber.e(t.toString());
+            }
+        });
+    }
 
-		// Get total number of pages from this call
-		assert rawResponse != null;
-		totalPages = rawResponse.getTotalPages();
-		Timber.d("Total number of pages: %s", totalPages);
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_top_rated:
+                sortAction = INTENT_SORT_TOP_RATED_MOVIES;
+                // Reset current page
+                currentPage = PAGE_START;
+                // Load first page of top rated movies
+                loadFirstPage();
+                // Click handled successfully
+                return true;
 
-		// Return the list of movies
-		return rawResponse.getMovies();
-	}
+            case R.id.action_popular:
+                // User clicked sort by popular movies menu item
+                sortAction = INTENT_SORT_POPULAR_MOVIES;
+                // Reset current page
+                currentPage = PAGE_START;
+                // Load first page of popular movies
+                loadFirstPage();
+                // Click handled successfully
+                return true;
+        }
 
-	private void loadNextPage() {
-		// Make network call
-		callMoviesApi().enqueue(new Callback<MainResponse>() {
-			@Override
-			public void onResponse(
-					@NonNull Call<MainResponse> call,
-					@NonNull Response<MainResponse> response
-			) {
-				Timber.d("loadNextPage() - pinging %s", call.request().url().toString());
-				isLoading = false;
+        // Default behaviour
+        return super.onOptionsItemSelected(item);
+    }
 
-				List<Movie> movies = fetchMovies(response);
-				adapter.addAll(movies);
+    private void prepareLayout() {
+        recyclerView.setHasFixedSize(true);
+        adapter = new MovieRecyclerAdapter(getContext(), this);
+        recyclerView.setAdapter(adapter);
+        // Configure layout manager
+        layoutManager = new GridLayoutManager(
+                getContext(),
+                1,
+                GridLayoutManager.VERTICAL,
+                false
+        );
 
-				if (currentPage == totalPages) {
-					isLastPage = true;
-				}
-			}
+        // Handle span count to support different screen sizes
+        recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(this);
 
-			@Override
-			public void onFailure(@NonNull Call<MainResponse> call, @NonNull Throwable t) {
-				Timber.e(t.toString());
-			}
-		});
-	}
+        recyclerView.setLayoutManager(layoutManager);
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-			case R.id.action_top_rated:
-				// User clicked sort by top rated movies menu item
-				sortAction = INTENT_SORT_TOP_RATED_MOVIES;
-				// Reset current page
-				currentPage = PAGE_START;
-				// Load first page of top rated movies
-				loadFirstPage();
-				// Click handled successfully
-				return true;
+        // Enable pagination
+        recyclerView.addOnScrollListener(new PaginationScrollListener(layoutManager) {
+            @Override
+            protected void loadMoreItems() {
+                isLoading = true;
+                currentPage++;
 
-			case R.id.action_popular:
-				// User clicked sort by popular movies menu item
-				sortAction = INTENT_SORT_POPULAR_MOVIES;
-				// Reset current page
-				currentPage = PAGE_START;
-				// Load first page of popular movies
-				loadFirstPage();
-				// Click handled successfully
-				return true;
-		}
+                loadNextPage();
+            }
 
-		// Default behaviour
-		return super.onOptionsItemSelected(item);
-	}
+            @Override
+            public int getTotalPageCount() {
+                return totalPages;
+            }
 
-	private void prepareLayout() {
-		// Configure layout manager
-		layoutManager = new GridLayoutManager(
-				getContext(),
-				1,
-				GridLayoutManager.VERTICAL,
-				false
-		);
+            @Override
+            public boolean isLastPage() {
+                return isLastPage;
+            }
 
-		// Handle span count to support different screen sizes
-		recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(this);
-	}
+            @Override
+            public boolean isLoading() {
+                return isLoading;
+            }
+        });
+    }
 
-	@Override
-	public void onListItemClick(int clickedPosition, int clickedItemMovieId) {
-		Intent detailViewRequestIntent = new Intent(getContext(), MovieDetailActivity.class);
-		detailViewRequestIntent.putExtra(MovieDetailFragment.INTENT_MOVIE_ID, clickedItemMovieId);
-		startActivity(detailViewRequestIntent);
-	}
+    @Override
+    public void onListItemClick(int clickedPosition, int clickedItemMovieId) {
+        Intent detailViewRequestIntent = new Intent(getContext(), MovieDetailActivity.class);
+        detailViewRequestIntent.putExtra(MovieDetailFragment.INTENT_MOVIE_ID, clickedItemMovieId);
+        startActivity(detailViewRequestIntent);
+    }
 
-	@Override
-	public void onGlobalLayout() {
-		// This works only for devices with at least Jelly Bean or above
-		recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+    /**
+     * Detect possible number of columns on current screen and set the calculated span count for the
+     * grid layout. IOW, enable consistent look across different screens
+     */
+    @Override
+    public void onGlobalLayout() {
+        // This works only for devices with at least Jelly Bean or above
+        recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
-		// Width of the recycler view
-		int viewWidth = recyclerView.getMeasuredWidth();
+        int viewWidth = recyclerView.getMeasuredWidth();
+        float posterImageWidth = getResources().getDimension(R.dimen.poster_width);
 
-		// Poster width
-		float posterImageWidth = getResources().getDimension(R.dimen.poster_width);
+        // Find how many posters can be accommodated within the recycler view
+        int newSpanCount = (int) Math.floor(viewWidth / posterImageWidth);
 
-		// Find how many posters can be accommodated within the recycler view
-		int newSpanCount = (int) Math.floor(viewWidth / posterImageWidth);
-
-		// Set calculated span count on the layout manager
-		layoutManager.setSpanCount(newSpanCount);
-		layoutManager.requestLayout();
-	}
+        layoutManager.setSpanCount(newSpanCount);
+        layoutManager.requestLayout();
+    }
 }
