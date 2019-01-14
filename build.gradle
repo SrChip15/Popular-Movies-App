@@ -37,4 +37,5 @@ ext {
     retrofit = '2.4.0'
     glideVersion = '4.7.1'
     junit = '4.12'
+    paging_version = '1.0.0'
 }

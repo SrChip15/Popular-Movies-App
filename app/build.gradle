@@ -48,4 +48,6 @@ dependencies {
 
     implementation "com.squareup.retrofit2:retrofit:${rootProject.ext.retrofit}"
     implementation "com.squareup.retrofit2:converter-gson:${rootProject.ext.retrofit}"
+
+    implementation "android.arch.paging:runtime:${rootProject.ext.paging_version}"
 }
