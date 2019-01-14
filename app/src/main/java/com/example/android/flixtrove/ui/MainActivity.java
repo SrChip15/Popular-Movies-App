@@ -55,13 +55,9 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        switch (id) {
-            case R.id.action_top_rated:
-                // Fragment handles this
-                return false;
-            case R.id.action_popular:
-                // Fragment handles this
-                return false;
+        // Fragment handles sort options
+        if (id == R.id.action_top_rated || id == R.id.action_popular) {
+            return false;
         }
 
         // Android framework handles default
