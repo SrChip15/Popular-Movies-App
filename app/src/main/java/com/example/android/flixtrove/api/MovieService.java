@@ -1,7 +1,7 @@
 package com.example.android.flixtrove.service.network;
 
-import com.example.android.flixtrove.service.model.MainResponse;
-import com.example.android.flixtrove.service.model.MovieDetailResponse;
+import com.example.android.flixtrove.model.MainResponse;
+import com.example.android.flixtrove.model.MovieDetailResponse;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

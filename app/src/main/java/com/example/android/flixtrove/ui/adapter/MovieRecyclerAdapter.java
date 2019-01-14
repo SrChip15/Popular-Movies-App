@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.android.flixtrove.R;
-import com.example.android.flixtrove.service.model.Movie;
+import com.example.android.flixtrove.model.Movie;
 
 import java.util.ArrayList;
 import java.util.List;

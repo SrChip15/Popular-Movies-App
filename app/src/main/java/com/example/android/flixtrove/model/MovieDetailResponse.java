@@ -1,5 +1,5 @@
 
-package com.example.android.flixtrove.service.model;
+package com.example.android.flixtrove.model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

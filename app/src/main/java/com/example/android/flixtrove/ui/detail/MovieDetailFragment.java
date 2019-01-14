@@ -17,7 +17,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.android.flixtrove.PrivateApiKey;
 import com.example.android.flixtrove.R;
-import com.example.android.flixtrove.service.model.MovieDetailResponse;
+import com.example.android.flixtrove.model.MovieDetailResponse;
 import com.example.android.flixtrove.service.network.MovieRepository;
 import com.example.android.flixtrove.service.network.MovieService;
 

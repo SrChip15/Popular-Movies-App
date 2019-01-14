@@ -17,8 +17,8 @@ import android.widget.ProgressBar;
 
 import com.example.android.flixtrove.PrivateApiKey;
 import com.example.android.flixtrove.R;
-import com.example.android.flixtrove.service.model.MainResponse;
-import com.example.android.flixtrove.service.model.Movie;
+import com.example.android.flixtrove.model.MainResponse;
+import com.example.android.flixtrove.model.Movie;
 import com.example.android.flixtrove.service.network.MovieRepository;
 import com.example.android.flixtrove.service.network.MovieService;
 import com.example.android.flixtrove.ui.adapter.MovieRecyclerAdapter;
@@ -117,7 +117,7 @@ public class MoviesListFragment
                     @NonNull Response<MainResponse> response
             ) {
                 Timber.d("Fetch data from: %s", call.request().url().toString());
-                List<Movie> movies = fetchMovies(response);
+                movies = fetchMovies(response);
                 adapter.addAll(movies);
 
                 // Hide progress bar
